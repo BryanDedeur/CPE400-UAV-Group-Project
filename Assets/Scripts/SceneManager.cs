@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class SceneManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public GameObject UAVPrefab;
+    public GameObject UserPrefab;
 
-    // Update is called once per frame
-    void Update()
+    public GameObject configurationMap;
+    private ConfigurationMap cm;
+
+    private void Awake()
     {
-        
+        cm = configurationMap.GetComponent<ConfigurationMap>();
+        cm.Initialize();
+
+        GameObject newUAV = Instantiate(UAVPrefab);
+        cm.InsertUAV(newUAV, 4, 6);
+        newUAV = Instantiate(UAVPrefab);
+        cm.InsertUAV(newUAV, 17, 11);
+
     }
 }
