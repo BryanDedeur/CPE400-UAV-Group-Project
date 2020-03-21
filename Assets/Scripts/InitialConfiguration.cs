@@ -12,7 +12,7 @@ public class InitialConfiguration : MonoBehaviour
         // Specify the configuration map settings
         configurationMap.Setup(2f, 5, 5);
 
-        Node nearestNodeToTower = configurationMap.PlaceTower(.5f, .1f);
+        Node nearestNodeToTower = configurationMap.PlaceTower(.5f, .0f);
 
         configurationMap.InsertUAV(nearestNodeToTower);
 

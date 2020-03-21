@@ -35,7 +35,7 @@ public class ConfigurationMap : MonoBehaviour
     */
     public Node PlaceTower(float verticalPercentage, float horizontalPercentage)
     {
-        Vector3 newPosition = groundOffset + new Vector3(verticalPercentage * verticalMapSize, 0, horizontalPercentage * horizontalMapSize);
+        Vector3 newPosition = groundOffset + new Vector3(verticalPercentage * verticalMapSize, towerPrefab.transform.localScale.y - 1, horizontalPercentage * horizontalMapSize);
         towerPrefab.transform.position = newPosition;
         Node nearestNode = GetNeasestNodeFromTower();
         return nearestNode;
@@ -191,11 +191,18 @@ public class ConfigurationMap : MonoBehaviour
         nr.cm = this;
 
         UAV.transform.position = configurationMapNodes[row, column].transform.position;
+
+        configurationMapNodes[row, column].UAV = UAV;
     }
 
     public void InsertUAV(Node node)
     {
         InsertUAV(node.row, node.col);
+    }
+
+    public void EmptyNodesWithConnection()
+    {
+
     }
 
     private void Start()
