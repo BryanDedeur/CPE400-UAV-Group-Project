@@ -77,6 +77,10 @@ public class NetworkRouter : MonoBehaviour
             }
             else
             {
+                // Reset router connection information.
+                router.Value.connectionLength = int.MaxValue;
+                router.Value.parentRouter = null;
+
                 unvisitedNodes.Add(router.Value.GetID(), new Node_Astar(int.MaxValue, int.MaxValue)); // Initialize all to infinite cost.
             }
         }
