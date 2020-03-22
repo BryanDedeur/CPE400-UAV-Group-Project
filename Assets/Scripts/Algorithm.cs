@@ -24,23 +24,38 @@ public class Algorithm : MonoBehaviour
     {
         List<Coordinate> neighborList = new List<Coordinate>();
 
-        if (row - 1 >= 0 && column - 1 >= 0)
-            neighborList.Add(new Coordinate(row - 1, column - 1));
-
-        if (row - 1 >= 0)
-            neighborList.Add(new Coordinate(row - 1, column));
-
-        if (column - 1 >= 0)
+        if (row % 2 == 0) // even rows
+        {
+            if (row + 1 < n_rows && column - 1 >= 0) // top left
+                neighborList.Add(new Coordinate(row + 1, column - 1));
+            if (row + 1 < n_rows) // top
+                neighborList.Add(new Coordinate(row + 1, column));
+        } 
+        else // odd rows
+        {
+            if (row + 1 < n_rows) // top left
+                neighborList.Add(new Coordinate(row + 1, column));
+            if (row + 1 < n_rows && column + 1 < n_columns) // top
+                neighborList.Add(new Coordinate(row + 1, column + 1));
+        }
+        if (column - 1 >= 0) // left
             neighborList.Add(new Coordinate(row, column - 1));
-
-        if (column + 1 < n_columns)
+        if (column + 1 < n_columns) // right
             neighborList.Add(new Coordinate(row, column + 1));
-
-        if (row + 1 < n_rows && column - 1 >= 0)
-            neighborList.Add(new Coordinate(row + 1, column - 1));
-
-        if (row + 1 < n_rows)
-            neighborList.Add(new Coordinate(row + 1, column));
+        if (row % 2 == 0) // even rows
+        {
+            if (row - 1 >= 0 && column - 1 >= 0) // bottom left
+                neighborList.Add(new Coordinate(row - 1, column - 1));
+            if (row - 1 >= 0) // bottom right
+                neighborList.Add(new Coordinate(row - 1, column));
+        } 
+        else // odd rows
+        {
+            if (row - 1 >= 0) // bottom left
+                neighborList.Add(new Coordinate(row - 1, column));
+            if (row - 1 >= 0 && column + 1 < n_columns) // bottom right
+                neighborList.Add(new Coordinate(row - 1, column + 1));
+        }
 
         return neighborList;
     }
@@ -57,10 +72,12 @@ public class Algorithm : MonoBehaviour
             {
                 if (compressedConfigurationMap[r, c])
                 {
+                    // Debug.Log(testC.Count);
                     coordinateList = coordinateList.Union(GetNeighboringCoordinates(r, c, rows, columns)).ToList();
                 }
             }
         }
+        //Debug.Log("Here");
 
         foreach (Coordinate coordinate in coordinateList.ToList())
         {

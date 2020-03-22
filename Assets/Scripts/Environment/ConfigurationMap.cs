@@ -98,23 +98,38 @@ public class ConfigurationMap : MonoBehaviour
     {
         List<Node> neighborList = new List<Node>();
 
-        if (row - 1 >= 0 && column - 1 >= 0)
-            neighborList.Add(configurationMapNodes[row - 1, column - 1]);
-
-        if (row - 1 >= 0)
-            neighborList.Add(configurationMapNodes[row - 1, column]);
-
-        if (column - 1 >= 0)
+        if (row % 2 == 0) // even rows
+        {
+            if (row + 1 < rows && column - 1 >= 0) // top left
+                neighborList.Add(configurationMapNodes[row + 1, column - 1]);
+            if (row + 1 < rows) // top right
+                neighborList.Add(configurationMapNodes[row + 1, column]);
+        }
+        else // odd rows
+        {
+            if (row + 1 < rows) // top left
+                neighborList.Add(configurationMapNodes[row + 1, column]);
+            if (row + 1 < rows && column + 1 < columns) // top right
+                neighborList.Add(configurationMapNodes[row + 1, column + 1]);
+        }
+        if (column - 1 >= 0) // left
             neighborList.Add(configurationMapNodes[row, column - 1]);
-
-        if (column + 1 < columns)
+        if (column + 1 < columns) // right
             neighborList.Add(configurationMapNodes[row, column + 1]);
-
-        if (row + 1 < rows && column - 1 >= 0)
-            neighborList.Add(configurationMapNodes[row + 1, column - 1]);
-
-        if (row + 1 < rows)
-            neighborList.Add(configurationMapNodes[row + 1, column]);
+        if (row % 2 == 0) // even rows
+        {
+            if (row - 1 >= 0 && column - 1 >= 0) // bottom left
+                neighborList.Add(configurationMapNodes[row - 1, column - 1]);
+            if (row - 1 >= 0) // bottom right
+                neighborList.Add(configurationMapNodes[row - 1, column]);
+        }
+        else // odd rows
+        {
+            if (row - 1 >= 0) // bottom left
+                neighborList.Add(configurationMapNodes[row - 1, column]);
+            if (row - 1 >= 0 && column + 1 < columns) // bottom right
+                neighborList.Add(configurationMapNodes[row - 1, column + 1]);
+        }
 
         return neighborList;
     }
@@ -145,9 +160,6 @@ public class ConfigurationMap : MonoBehaviour
                         if (configurationMapNodes[r, c].UAV.GetComponent<NetworkRouter>().connectionLength < int.MaxValue)
                         {
                             compressedConfigurationMap[r, c] = true;
-                            Debug.Log(r);
-                            Debug.Log(c);
-                            Debug.Log("Yes");
                         } else
                         {
                             compressedConfigurationMap[r, c] = false;
@@ -155,9 +167,6 @@ public class ConfigurationMap : MonoBehaviour
                     } else
                     {
                         compressedConfigurationMap[r, c] = true;
-                        Debug.Log(r);
-                        Debug.Log(c);
-                        Debug.Log("Yes");
                     }
                 } else
                 {
@@ -165,8 +174,6 @@ public class ConfigurationMap : MonoBehaviour
                 }
             }
         }
-
-        Debug.Log("Stop");
 
         return compressedConfigurationMap;
     }
