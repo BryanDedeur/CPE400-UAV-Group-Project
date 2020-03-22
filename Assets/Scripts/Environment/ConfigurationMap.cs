@@ -25,7 +25,7 @@ public class ConfigurationMap : MonoBehaviour
 
 
     public Node[,] configurationMapNodes;
-    public List<NetworkRouter> allRouters;
+    public Dictionary<int, NetworkRouter> allRouters;
     
 
     /* Places the tower and returns the nearest node to that tower, origin is at the lower right
@@ -170,15 +170,15 @@ public class ConfigurationMap : MonoBehaviour
             return;
         }
         focusRouter.connectedRouters.Clear();
-        foreach (NetworkRouter router in allRouters)
+        foreach (KeyValuePair<int, NetworkRouter> router in allRouters)
         {
-            if (router == focusRouter)
+            if (router.Value == focusRouter)
             {
                 continue;
             }
-            if ((router.transform.position - focusRouter.transform.position).magnitude <= connectionRadius)
+            if ((router.Value.transform.position - focusRouter.transform.position).magnitude <= connectionRadius)
             {
-                focusRouter.connectedRouters.Add(router);
+                focusRouter.connectedRouters.Add(router.Key, router.Value);
             }
         }
     }
@@ -200,11 +200,6 @@ public class ConfigurationMap : MonoBehaviour
         InsertUAV(node.row, node.col);
     }
 
-    public void EmptyNodesWithConnection()
-    {
-
-    }
-
     private void Start()
     {
 
@@ -212,7 +207,7 @@ public class ConfigurationMap : MonoBehaviour
 
     private void Awake()
     {
-        allRouters = new List<NetworkRouter>();
+        allRouters = new Dictionary<int, NetworkRouter>();
 
         if (UAVPrefab == null)
         {
