@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Coordinate = Algorithm.Coordinate;
 
 public class ConfigurationMap : MonoBehaviour
 {
@@ -127,6 +128,64 @@ public class ConfigurationMap : MonoBehaviour
     public List<Node> GetNeighbors(Node node)
     {
         return GetNeighbors(node.row, node.col);
+    }
+
+    public bool[,] GetCompressedConfigurationMap(bool withConnection=true)
+    {
+        bool[,] compressedConfigurationMap = new bool[rows, columns];
+
+        for (int c = 0; c < columns; c++)
+        {
+            for (int r = 0; r < rows; r++)
+            {
+                if (configurationMapNodes[r, c] != null && configurationMapNodes[r, c].UAV != null)
+                {
+                    if (withConnection)
+                    {
+                        if (configurationMapNodes[r, c].UAV.GetComponent<NetworkRouter>().connectionLength < int.MaxValue)
+                        {
+                            compressedConfigurationMap[r, c] = true;
+                            Debug.Log(r);
+                            Debug.Log(c);
+                            Debug.Log("Yes");
+                        } else
+                        {
+                            compressedConfigurationMap[r, c] = false;
+                        }
+                    } else
+                    {
+                        compressedConfigurationMap[r, c] = true;
+                        Debug.Log(r);
+                        Debug.Log(c);
+                        Debug.Log("Yes");
+                    }
+                } else
+                {
+                    compressedConfigurationMap[r, c] = false;
+                }
+            }
+        }
+
+        Debug.Log("Stop");
+
+        return compressedConfigurationMap;
+    }
+
+    public Node GetNode(Coordinate coordinate)
+    {
+        return configurationMapNodes[coordinate.r, coordinate.c];
+    }
+
+    public List<Node> GetNodes(List<Coordinate> coordinates)
+    {
+        List<Node> nodeList = new List<Node>();
+
+        foreach(Coordinate coordinate in coordinates)
+        {
+            nodeList.Add(GetNode(coordinate));
+        }
+
+        return nodeList;
     }
 
     public Node GetNeasestNodeFromTower()

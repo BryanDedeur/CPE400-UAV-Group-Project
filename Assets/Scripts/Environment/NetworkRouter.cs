@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class NetworkRouter : MonoBehaviour
@@ -53,11 +54,10 @@ public class NetworkRouter : MonoBehaviour
         {
             userServing = 0;
         }
-        displayingConnectedRouters.Clear();
         cm.GetNearbyRouters(this);
+        displayingConnectedRouters = connectedRouters.Values.ToList();
         foreach (KeyValuePair<int, NetworkRouter> connection in connectedRouters)
         {
-            displayingConnectedRouters.Add(connection.Value);
             Debug.DrawLine(transform.position, connection.Value.transform.position, Color.red);
         }
         ComputeTransmissionPath_AStar();
