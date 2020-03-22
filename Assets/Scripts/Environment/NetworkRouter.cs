@@ -65,22 +65,26 @@ public class NetworkRouter : MonoBehaviour
 
     void ComputeTransmissionPath_AStar()
     {
-        Dictionary<int, Node_Astar> unvisitedNodes = new Dictionary<int, Node_Astar>();
+        /// Compute the shortest connection path between the tower and each router of UAV using A* algorithm.
 
+        // Append each router to A* graph node dictionary.
+        Dictionary<int, Node_Astar> unvisitedNodes = new Dictionary<int, Node_Astar>();
         foreach (KeyValuePair<int, NetworkRouter> router in cm.allRouters)
         {
             if (router.Value.name == "Tower")
             {
-                unvisitedNodes.Add(router.Value.GetID(), new Node_Astar(0, 0));
+                unvisitedNodes.Add(router.Value.GetID(), new Node_Astar(0, 0)); // Tower is the starting point (zero cost).
             }
             else
             {
-                unvisitedNodes.Add(router.Value.GetID(), new Node_Astar(int.MaxValue, int.MaxValue));
+                unvisitedNodes.Add(router.Value.GetID(), new Node_Astar(int.MaxValue, int.MaxValue)); // Initialize all to infinite cost.
             }
         }
 
+        // While there are unvisited nodes.
         while(unvisitedNodes.Count > 0)
         {
+            // Find the lowest cost node.
             int lowestHeuristicCost = int.MaxValue;
             int currentID = -1;
             foreach (KeyValuePair<int , Node_Astar> entry in unvisitedNodes)
@@ -92,23 +96,35 @@ public class NetworkRouter : MonoBehaviour
                 }
             }
 
+            // If all of the nodes in unvisited node dictionary has infinite cost, 
+            // that means all of the unvisited nodes do not have connection to the tower.
             if (currentID == -1)
             {
                 break;
             }
 
+            // Remove the visiting node from unvisited node dicionary.
             Node_Astar currentNode = unvisitedNodes[currentID];
             unvisitedNodes.Remove(currentID);
+
+            // For each neighboring nodes of the visiting node.
             foreach (KeyValuePair<int, NetworkRouter> consideringRouter in cm.allRouters[currentID].connectedRouters)
             {
+                // If neighboring node is unvisited.
                 if (unvisitedNodes.ContainsKey(consideringRouter.Key))
                 {
+                    // Compute new cost.
                     int newPathCost = currentNode.pathCost + 1;
                     int newHeuristicCost = newPathCost + consideringRouter.Value.userServing;
+
+                    // If the new cost is smaller than the cost of the neighboring node.
                     if (newHeuristicCost < unvisitedNodes[consideringRouter.Key].heuristicCost)
                     {
+                        // Update the cost.
                         Node_Astar nodeUnderConsideration = new Node_Astar(newPathCost, newHeuristicCost);
                         unvisitedNodes[consideringRouter.Key] = nodeUnderConsideration;
+                        
+                        // Update connection information.
                         consideringRouter.Value.parentRouter = cm.allRouters[currentID];
                         consideringRouter.Value.connectionLength = newPathCost;
                     }
