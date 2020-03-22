@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class NetworkRouter : MonoBehaviour
 {
@@ -15,8 +14,8 @@ public class NetworkRouter : MonoBehaviour
     private LineRenderer lr;
 
     private int ID;
-    private int connectionLength = 0;
-    private NetworkRouter parentRouter = null;
+    public int connectionLength = 0;
+    public NetworkRouter parentRouter = null;
     private int userServing = 0;
 
     private struct Node_Astar
@@ -54,7 +53,6 @@ public class NetworkRouter : MonoBehaviour
         {
             userServing = 0;
         }
-
         displayingConnectedRouters.Clear();
         cm.GetNearbyRouters(this);
         foreach (KeyValuePair<int, NetworkRouter> connection in connectedRouters)
@@ -62,11 +60,11 @@ public class NetworkRouter : MonoBehaviour
             displayingConnectedRouters.Add(connection.Value);
             Debug.DrawLine(transform.position, connection.Value.transform.position, Color.red);
         }
+        ComputeTransmissionPath_AStar();
     }
 
-    void ComputeTransmissionPath_AStar(ref NetworkRouter tower)
+    void ComputeTransmissionPath_AStar()
     {
-        Dictionary<int, Node_Astar> visitedNodes = new Dictionary<int, Node_Astar>();
         Dictionary<int, Node_Astar> unvisitedNodes = new Dictionary<int, Node_Astar>();
 
         foreach (KeyValuePair<int, NetworkRouter> router in cm.allRouters)
@@ -81,12 +79,10 @@ public class NetworkRouter : MonoBehaviour
             }
         }
 
-        // ref NetworkRouter currentRouter = ref tower;
         while(unvisitedNodes.Count > 0)
         {
-            //Stop when all nodes are visited or the smallest cost node is infinite.
             int lowestHeuristicCost = int.MaxValue;
-            int currentID = 0;
+            int currentID = -1;
             foreach (KeyValuePair<int , Node_Astar> entry in unvisitedNodes)
             {
                 if (entry.Value.heuristicCost < lowestHeuristicCost)
@@ -96,7 +92,28 @@ public class NetworkRouter : MonoBehaviour
                 }
             }
 
+            if (currentID == -1)
+            {
+                break;
+            }
 
+            Node_Astar currentNode = unvisitedNodes[currentID];
+            unvisitedNodes.Remove(currentID);
+            foreach (KeyValuePair<int, NetworkRouter> consideringRouter in cm.allRouters[currentID].connectedRouters)
+            {
+                if (unvisitedNodes.ContainsKey(consideringRouter.Key))
+                {
+                    int newPathCost = currentNode.pathCost + 1;
+                    int newHeuristicCost = newPathCost + consideringRouter.Value.userServing;
+                    if (newHeuristicCost < unvisitedNodes[consideringRouter.Key].heuristicCost)
+                    {
+                        Node_Astar nodeUnderConsideration = new Node_Astar(newPathCost, newHeuristicCost);
+                        unvisitedNodes[consideringRouter.Key] = nodeUnderConsideration;
+                        consideringRouter.Value.parentRouter = cm.allRouters[currentID];
+                        consideringRouter.Value.connectionLength = newPathCost;
+                    }
+                }
+            }
         }
     }
 }
