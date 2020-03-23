@@ -13,6 +13,7 @@ public class ConfigurationMap : MonoBehaviour
 
     public int totalUsers = 0;
 
+    private float connectionBuffer = 1;
     private float connectionRadius;
     private int rows;
     private int columns;
@@ -44,6 +45,10 @@ public class ConfigurationMap : MonoBehaviour
 
     private void Initialize()
     {
+        GameObject visualContainer = new GameObject();
+        visualContainer.transform.parent = transform;
+        visualContainer.name = "VisualsContainer";
+
         configurationMapNodes = new Node[rows, columns];
         for (int c = 0; c < columns; c++)
         {
@@ -53,12 +58,12 @@ public class ConfigurationMap : MonoBehaviour
                 
                 if ((r % 2 == 0))
                 {
-                    visual = Instantiate(nodePrefab, nodeOffset + new Vector3((Mathf.Sqrt(3) * r * connectionRadius) / 2, uavHeight, c * connectionRadius), new Quaternion());
+                    visual = Instantiate(nodePrefab, nodeOffset + new Vector3((Mathf.Sqrt(3) * r * (connectionRadius)) / 2, uavHeight, c * (connectionRadius)), new Quaternion());
                 } else
                 {
                     if (c + 1 < columns)
                     {
-                        visual = Instantiate(nodePrefab, nodeOffset + new Vector3((Mathf.Sqrt(3) * r * connectionRadius) / 2, uavHeight, c * connectionRadius + .5f * connectionRadius), new Quaternion());
+                        visual = Instantiate(nodePrefab, nodeOffset + new Vector3((Mathf.Sqrt(3) * r * (connectionRadius)) / 2, uavHeight, c * (connectionRadius) + .5f * (connectionRadius)), new Quaternion());
                     }
                     else
                     {
@@ -67,16 +72,27 @@ public class ConfigurationMap : MonoBehaviour
                 }
 
 
-                Node newNode = visual.AddComponent<Node>();
+                GameObject nodeGameObject = Instantiate(nodePrefab);
+                MeshRenderer mr = nodeGameObject.GetComponent<MeshRenderer>();
+                mr.material.color = new Color(100, 100, 255);
+                nodeGameObject.name = "Node[" + r.ToString() + ", " + c.ToString() + "]";
+                nodeGameObject.transform.parent = transform;
+                nodeGameObject.transform.position = visual.transform.position;
+               
+                Node newNode = nodeGameObject.AddComponent<Node>();
                 newNode.row = r;
                 newNode.col = c;
-                newNode.numberUsers = Random.Range(0, 10);
+                newNode.visual = visual;
+                newNode.numberUsers = Random.Range(0, 50);
+                newNode.visual.transform.localScale = new Vector3(1, .01f, 1) * newNode.numberUsers * .1f;
                 totalUsers += newNode.numberUsers;
-                visual.transform.parent = transform;
-                visual.name = "Node";
+                visual.transform.parent = visualContainer.transform;
+                visual.name = "Visual";
                 configurationMapNodes[r, c] = newNode;
             }
         }
+        connectionRadius += connectionBuffer;
+
     }
 
     public void Setup(float UAVConnectionRadiusInMeters, int MaxUAVrows, int MaxUAVcolumns)
@@ -183,6 +199,11 @@ public class ConfigurationMap : MonoBehaviour
         return configurationMapNodes[coordinate.r, coordinate.c];
     }
 
+    public Node GetNode(int row, int column)
+    {
+        return configurationMapNodes[row, column];
+    }
+
     public List<Node> GetNodes(List<Coordinate> coordinates)
     {
         List<Node> nodeList = new List<Node>();
@@ -192,6 +213,35 @@ public class ConfigurationMap : MonoBehaviour
             nodeList.Add(GetNode(coordinate));
         }
 
+        return nodeList;
+    }
+
+    public List<Node> GetAllNodes()
+    {
+        List<Node> nodeList = new List<Node>();
+
+        for (int c = 0; c < columns; c++)
+        {
+            for (int r = 0; r < rows; r++)
+            {
+                if ((r % 2 == 0))
+                {
+                    nodeList.Add(GetNode(r, c));
+                }
+                else
+                {
+                    if (c + 1 < columns)
+                    {
+                        nodeList.Add(GetNode(r, c));
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+            }
+        }
         return nodeList;
     }
 
@@ -256,7 +306,10 @@ public class ConfigurationMap : MonoBehaviour
         NetworkRouter nr = UAV.AddComponent<NetworkRouter>();
         nr.cm = this;
 
-        UAV.transform.position = configurationMapNodes[row, column].transform.position;
+        UAV.transform.position = towerPrefab.transform.position;
+
+        AICommands ai = UAV.GetComponent<AICommands>();
+        ai.AddCommand(AICommands.CommandType.MoveTo, configurationMapNodes[row, column].gameObject);
 
         configurationMapNodes[row, column].UAV = UAV;
     }
@@ -264,6 +317,28 @@ public class ConfigurationMap : MonoBehaviour
     public void InsertUAV(Node node)
     {
         InsertUAV(node.row, node.col);
+    }
+
+    public bool MoveUAV(Node fromNode, Node toNode)
+    {
+        if (fromNode.UAV == null)
+        {
+            return false;
+        }
+        GameObject UAV = fromNode.UAV;
+
+        if (toNode.UAV != null)
+        {
+            return false; // end if the node is already occupied
+        }
+
+        toNode.UAV = UAV;
+        fromNode.UAV = null;
+
+        AICommands ai = UAV.GetComponent<AICommands>();
+        ai.AddCommand(AICommands.CommandType.MoveTo, toNode.gameObject);
+        print("ADDED COMMAND");
+        return true;
     }
 
     private void Start()

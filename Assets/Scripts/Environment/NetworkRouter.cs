@@ -58,7 +58,7 @@ public class NetworkRouter : MonoBehaviour
         displayingConnectedRouters = connectedRouters.Values.ToList();
         foreach (KeyValuePair<int, NetworkRouter> connection in connectedRouters)
         {
-            Debug.DrawLine(transform.position, connection.Value.transform.position, Color.red);
+            Debug.DrawLine(transform.position, connection.Value.transform.position, new Color(.5f,.5f,1f));
         }
         ComputeTransmissionPath_AStar();
     }

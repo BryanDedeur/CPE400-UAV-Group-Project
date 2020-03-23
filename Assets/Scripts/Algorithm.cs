@@ -102,5 +102,6 @@ public class Algorithm : MonoBehaviour
     void Update()
     {
         emptyNodesWithConnection = cm.GetNodes(GetEmptyConnectedCoordinates(cm.GetCompressedConfigurationMap()));
+
     }
 }
