@@ -7,6 +7,10 @@ public class NetworkRouter : MonoBehaviour
 {
     static private int maximumUserCapacity = 5;
     static private float userConnectionDistance = 10f;
+    static private float heuristicWeightUsers = .5f;
+    static private float heuristicWeightDistance = 1f;
+    static private float heuristicWeightHops = 1f;
+
     static private int IDcounter = 0;
 
     public ConfigurationMap cm;
@@ -15,16 +19,17 @@ public class NetworkRouter : MonoBehaviour
     private LineRenderer lr;
 
     private int ID;
-    public int connectionLength = 0;
+    public float connectionLength = 0f;
+    public int numberOfHops = 0;
     public NetworkRouter parentRouter = null;
     private int userServing = 0;
 
     private struct Node_Astar
     {
-        public int pathCost;
-        public int heuristicCost;
+        public float pathCost;
+        public float heuristicCost;
 
-        public Node_Astar(int new_pathCost, int new_heuristicCost)
+        public Node_Astar(float new_pathCost, float new_heuristicCost)
         {
             pathCost = new_pathCost;
             heuristicCost = new_heuristicCost;
@@ -50,12 +55,15 @@ public class NetworkRouter : MonoBehaviour
         if (gameObject.transform.parent != null)
         {
             userServing = gameObject.GetComponentInParent<Node>().numberUsers;
-        } else
+        } 
+        else
         {
             userServing = 0;
         }
+
         cm.GetNearbyRouters(this);
         displayingConnectedRouters = connectedRouters.Values.ToList();
+
         foreach (KeyValuePair<int, NetworkRouter> connection in connectedRouters)
         {
             Debug.DrawLine(transform.position, connection.Value.transform.position, Color.red);
@@ -73,15 +81,16 @@ public class NetworkRouter : MonoBehaviour
         {
             if (router.Value.name == "Tower")
             {
-                unvisitedNodes.Add(router.Value.GetID(), new Node_Astar(0, 0)); // Tower is the starting point (zero cost).
+                unvisitedNodes.Add(router.Value.GetID(), new Node_Astar(0f, 0f)); // Tower is the starting point (zero cost).
             }
             else
             {
                 // Reset router connection information.
-                router.Value.connectionLength = int.MaxValue;
+                router.Value.connectionLength = Mathf.Infinity;
                 router.Value.parentRouter = null;
+                router.Value.numberOfHops = 0;
 
-                unvisitedNodes.Add(router.Value.GetID(), new Node_Astar(int.MaxValue, int.MaxValue)); // Initialize all to infinite cost.
+                unvisitedNodes.Add(router.Value.GetID(), new Node_Astar(Mathf.Infinity, Mathf.Infinity)); // Initialize all to infinite cost.
             }
         }
 
@@ -89,7 +98,7 @@ public class NetworkRouter : MonoBehaviour
         while(unvisitedNodes.Count > 0)
         {
             // Find the lowest cost node.
-            int lowestHeuristicCost = int.MaxValue;
+            float lowestHeuristicCost = Mathf.Infinity;
             int currentID = -1;
             foreach (KeyValuePair<int , Node_Astar> entry in unvisitedNodes)
             {
@@ -110,16 +119,17 @@ public class NetworkRouter : MonoBehaviour
             // Remove the visiting node from unvisited node dicionary.
             Node_Astar currentNode = unvisitedNodes[currentID];
             unvisitedNodes.Remove(currentID);
+            NetworkRouter currentRouter = cm.allRouters[currentID];
 
             // For each neighboring nodes of the visiting node.
-            foreach (KeyValuePair<int, NetworkRouter> consideringRouter in cm.allRouters[currentID].connectedRouters)
+            foreach (KeyValuePair<int, NetworkRouter> consideringRouter in currentRouter.connectedRouters)
             {
                 // If neighboring node is unvisited.
                 if (unvisitedNodes.ContainsKey(consideringRouter.Key))
                 {
                     // Compute new cost.
-                    int newPathCost = currentNode.pathCost + 1;
-                    int newHeuristicCost = newPathCost + consideringRouter.Value.userServing;
+                    float newPathCost = currentNode.pathCost + Vector3.Distance(consideringRouter.Value.transform.position, currentRouter.transform.position);
+                    float newHeuristicCost = heuristicWeightDistance * newPathCost + heuristicWeightUsers * consideringRouter.Value.userServing + heuristicWeightHops * consideringRouter.Value.numberOfHops;
 
                     // If the new cost is smaller than the cost of the neighboring node.
                     if (newHeuristicCost < unvisitedNodes[consideringRouter.Key].heuristicCost)
@@ -129,8 +139,9 @@ public class NetworkRouter : MonoBehaviour
                         unvisitedNodes[consideringRouter.Key] = nodeUnderConsideration;
                         
                         // Update connection information.
-                        consideringRouter.Value.parentRouter = cm.allRouters[currentID];
+                        consideringRouter.Value.parentRouter = currentRouter;
                         consideringRouter.Value.connectionLength = newPathCost;
+                        consideringRouter.Value.numberOfHops = currentRouter.numberOfHops + 1;
                     }
                 }
             }

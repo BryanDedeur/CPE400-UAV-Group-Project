@@ -160,15 +160,18 @@ public class ConfigurationMap : MonoBehaviour
                         if (configurationMapNodes[r, c].UAV.GetComponent<NetworkRouter>().connectionLength < int.MaxValue)
                         {
                             compressedConfigurationMap[r, c] = true;
-                        } else
+                        } 
+                        else
                         {
                             compressedConfigurationMap[r, c] = false;
                         }
-                    } else
+                    } 
+                    else
                     {
                         compressedConfigurationMap[r, c] = true;
                     }
-                } else
+                } 
+                else
                 {
                     compressedConfigurationMap[r, c] = false;
                 }
