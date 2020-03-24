@@ -12,6 +12,7 @@ public class ConfigurationMap : MonoBehaviour
     public GameObject towerPrefab;
 
     public int totalUsers = 0;
+    public int totalUAVs = 0;
 
     private float connectionRadius;
     private int rows;
@@ -181,6 +182,56 @@ public class ConfigurationMap : MonoBehaviour
         return compressedConfigurationMap;
     }
 
+    public List<Coordinate> GetConfigurationCoordinates(bool withConnection=true)
+    {
+        List<Coordinate> configurationCoordinates = new List<Coordinate>();
+
+        for (int c = 0; c < columns; c++)
+        {
+            for (int r = 0; r < rows; r++)
+            {
+                if (configurationMapNodes[r, c] != null && configurationMapNodes[r, c].UAV != null)
+                {
+                    if (withConnection)
+                    {
+                        if (configurationMapNodes[r, c].UAV.GetComponent<NetworkRouter>().connectionLength < int.MaxValue)
+                        {
+                            configurationCoordinates.Add(new Coordinate(r, c));
+                        }
+                    }
+                    else
+                    {
+                        configurationCoordinates.Add(new Coordinate(r, c));
+                    }
+                }
+            }
+        }
+
+        return configurationCoordinates;
+    }
+
+    public int[,] GetUserCountMap()
+    {
+        int[,] userCountMap = new int[rows, columns];
+
+        for (int c = 0; c < columns; ++c)
+        {
+            for (int r = 0; r < rows; ++r)
+            {
+                if (configurationMapNodes[r, c] != null)
+                {
+                    userCountMap[r, c] = configurationMapNodes[r, c].numberUsers;
+                }
+                else
+                {
+                    userCountMap[r, c] = 0;
+                }
+            }
+        }
+
+        return userCountMap;
+    }
+
     public Node GetNode(Coordinate coordinate)
     {
         return configurationMapNodes[coordinate.r, coordinate.c];
@@ -232,6 +283,59 @@ public class ConfigurationMap : MonoBehaviour
         return nearestNode;
     }
 
+    public (Node, float) GetNeasestNodeFromTowerWithDistance()
+    {
+        Node nearestNode = null;
+        float nearestDistance = Mathf.Infinity;
+        for (int c = 0; c < rows; c++)
+        {
+            for (int r = 0; r < columns; r++)
+            {
+                float currentDistance = 0;
+                if (r % 2 == 0)
+                {
+                    currentDistance = (configurationMapNodes[r, c].transform.position - towerPrefab.transform.position).magnitude;
+                }
+                else
+                {
+                    if (c + 1 < columns)
+                    {
+                        currentDistance = (configurationMapNodes[r, c].transform.position - towerPrefab.transform.position).magnitude;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                if (currentDistance < nearestDistance)
+                {
+                    nearestNode = configurationMapNodes[r, c];
+                    nearestDistance = currentDistance;
+                }
+            }
+        }
+
+        return (nearestNode, nearestDistance);
+    }
+
+    public List<Node> GetManyNeasestNodesFromTower()
+    {
+        List<Node> manyNearestNodes = new List<Node>();
+        (Node nearestNodeToTower, float distance) = GetNeasestNodeFromTowerWithDistance();
+        List<Node> neighborNodesNearTower = GetNeighbors(nearestNodeToTower);
+
+        manyNearestNodes.Add(nearestNodeToTower);
+        foreach (Node node in neighborNodesNearTower)
+        {
+            if ((node.transform.position - towerPrefab.transform.position).magnitude == distance)
+            {
+                manyNearestNodes.Add(node);
+            }
+        }
+
+        return manyNearestNodes;
+    }
+
     public void GetNearbyRouters(NetworkRouter focusRouter)
     {
         if (focusRouter == null)
@@ -262,6 +366,7 @@ public class ConfigurationMap : MonoBehaviour
         UAV.transform.position = configurationMapNodes[row, column].transform.position;
 
         configurationMapNodes[row, column].UAV = UAV;
+        ++totalUAVs;
     }
 
     public void InsertUAV(Node node)
