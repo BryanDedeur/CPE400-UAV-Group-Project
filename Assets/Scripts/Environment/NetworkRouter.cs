@@ -7,9 +7,6 @@ public class NetworkRouter : MonoBehaviour
 {
     static private int maximumUserCapacity = 5;
     static private float userConnectionDistance = 10f;
-    static private float heuristicWeightUsers = .5f;
-    static private float heuristicWeightDistance = 1f;
-    static private float heuristicWeightHops = 1f;
 
     static private int IDcounter = 0;
 
@@ -68,10 +65,9 @@ public class NetworkRouter : MonoBehaviour
         {
             Debug.DrawLine(transform.position, connection.Value.transform.position, Color.red);
         }
-        ComputeTransmissionPath_AStar();
     }
 
-    void ComputeTransmissionPath_AStar()
+    public void ComputeTransmissionPath_AStar()
     {
         /// Compute the shortest connection path between the tower and each router of UAV using A* algorithm.
 
@@ -128,8 +124,8 @@ public class NetworkRouter : MonoBehaviour
                 if (unvisitedNodes.ContainsKey(consideringRouter.Key))
                 {
                     // Compute new cost.
-                    float newPathCost = currentNode.pathCost + Vector3.Distance(consideringRouter.Value.transform.position, currentRouter.transform.position);
-                    float newHeuristicCost = heuristicWeightDistance * newPathCost + heuristicWeightUsers * consideringRouter.Value.userServing + heuristicWeightHops * consideringRouter.Value.numberOfHops;
+                    float newPathCost = currentNode.pathCost + Vector3.Distance(consideringRouter.Value.transform.position, currentRouter.transform.position) + consideringRouter.Value.userServing;
+                    float newHeuristicCost = newPathCost + consideringRouter.Value.numberOfHops;
 
                     // If the new cost is smaller than the cost of the neighboring node.
                     if (newHeuristicCost < unvisitedNodes[consideringRouter.Key].heuristicCost)

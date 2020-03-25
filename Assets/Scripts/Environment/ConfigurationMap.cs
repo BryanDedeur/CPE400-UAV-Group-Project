@@ -418,7 +418,10 @@ public class ConfigurationMap : MonoBehaviour
             nr.cm = this;
         }
         towerPrefab.name = "Tower";
+    }
 
-
+    public void Update()
+    {
+        towerPrefab.GetComponent<NetworkRouter>().ComputeTransmissionPath_AStar();
     }
 }
