@@ -49,7 +49,7 @@ public class NetworkRouter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (gameObject.transform.parent != null)
+        if (gameObject.transform.parent != null && gameObject.transform.parent.GetComponent<Node>() != null)
         {
             userServing = gameObject.GetComponentInParent<Node>().numberUsers;
         } 

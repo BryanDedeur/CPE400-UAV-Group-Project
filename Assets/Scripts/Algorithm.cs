@@ -8,6 +8,8 @@ public class Algorithm : MonoBehaviour
     public ConfigurationMap cm;
     public List<Node> plannedNodes;
     public int highestPlannedUserCount = 0;
+    public float updateFrequency;
+    private float counter = 0;
 
     public struct Coordinate
     {
@@ -63,45 +65,12 @@ public class Algorithm : MonoBehaviour
 
     static public List<Coordinate> GetNeighboringCoordinates(Coordinate coordinate, int n_rows, int n_columns)
     {
-        List<Coordinate> neighborList = new List<Coordinate>();
         int row = coordinate.r;
         int column = coordinate.c;
 
-        if (row % 2 == 0) // even rows
-        {
-            if (row + 1 < n_rows && column - 1 >= 0) // top left
-                neighborList.Add(new Coordinate(row + 1, column - 1));
-            if (row + 1 < n_rows) // top
-                neighborList.Add(new Coordinate(row + 1, column));
-        }
-        else // odd rows
-        {
-            if (row + 1 < n_rows) // top left
-                neighborList.Add(new Coordinate(row + 1, column));
-            if (row + 1 < n_rows && column + 1 < n_columns) // top
-                neighborList.Add(new Coordinate(row + 1, column + 1));
-        }
-        if (column - 1 >= 0) // left
-            neighborList.Add(new Coordinate(row, column - 1));
-        if (column + 1 < n_columns) // right
-            neighborList.Add(new Coordinate(row, column + 1));
-        if (row % 2 == 0) // even rows
-        {
-            if (row - 1 >= 0 && column - 1 >= 0) // bottom left
-                neighborList.Add(new Coordinate(row - 1, column - 1));
-            if (row - 1 >= 0) // bottom right
-                neighborList.Add(new Coordinate(row - 1, column));
-        }
-        else // odd rows
-        {
-            if (row - 1 >= 0) // bottom left
-                neighborList.Add(new Coordinate(row - 1, column));
-            if (row - 1 >= 0 && column + 1 < n_columns) // bottom right
-                neighborList.Add(new Coordinate(row - 1, column + 1));
-        }
-
-        return neighborList;
+        return GetNeighboringCoordinates(row, column, n_rows, n_columns); ;
     }
+
 
     public List<Coordinate> GetEmptyConnectedCoordinates(List<Coordinate> configurationCoordiates, int rows, int columns)
     {
@@ -203,14 +172,27 @@ public class Algorithm : MonoBehaviour
         cm = GetComponent<ConfigurationMap>();
         plannedNodes = new List<Node>();
         highestPlannedUserCount = 0;
+        counter = updateFrequency;
     }
 
     // Update is called once per frame
     void Update()
     {
-        int[,] userCountMap = cm.GetUserCountMap();
-        (List<Coordinate> newConfigurationCoordinates, int users) = PlanConfigurationMap(ref userCountMap, cm.totalUAVs, NodesToCoordinates(cm.GetManyNeasestNodesFromTower()));
-        plannedNodes = cm.GetNodes(newConfigurationCoordinates);
-        highestPlannedUserCount = users;
+        if (counter < 0)
+        {
+            counter = updateFrequency;
+
+            int[,] userCountMap = cm.GetUserCountMap();
+            (List<Coordinate> newConfigurationCoordinates, int users) = PlanConfigurationMap(ref userCountMap, cm.totalUAVs, NodesToCoordinates(cm.GetManyNeasestNodesFromTower()));
+            plannedNodes = cm.GetNodes(newConfigurationCoordinates);
+            highestPlannedUserCount = users;
+
+            for (int id = 1; id <= cm.totalUAVs; ++id)
+            {
+                cm.StopUAV(id);
+                cm.MoveUAV(id, plannedNodes[id - 1]);
+            }
+        }
+        counter -= Time.deltaTime;
     }
 }

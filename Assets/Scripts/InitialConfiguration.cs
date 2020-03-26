@@ -15,15 +15,22 @@ public class InitialConfiguration : MonoBehaviour
 
         Node nearestNodeToTower = configurationMap.PlaceTower(.5f, .0f);
 
-        configurationMap.InsertUAV(nearestNodeToTower);
+        // configurationMap.InsertUAV(nearestNodeToTower);
 
         List<Node> neighbors = configurationMap.GetNeighbors(nearestNodeToTower);
 
+        /*
         foreach (Node node in configurationMap.GetAllNodes())
         {
             GameObject go = configurationMap.InsertUAV(node);
             configurationMap.MoveUAV(go, new Vector3(Random.RandomRange(0,20), 20, Random.RandomRange(0, 20)));
 
+        }
+        */
+
+        for (int i = 0; i < 5; ++i)
+        {
+            GameObject go = configurationMap.InsertUAV();
         }
 
     }

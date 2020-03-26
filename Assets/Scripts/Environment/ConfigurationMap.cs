@@ -423,9 +423,25 @@ public class ConfigurationMap : MonoBehaviour
         return UAV;
     }
 
+    public GameObject InsertUAV()
+    {
+        Node nearestTowerNode = GetNeasestNodeFromTower();
+        GameObject UAV = Instantiate(UAVPrefab, configurationMapNodes[nearestTowerNode.row, nearestTowerNode.col].transform);
+        UAV.name = "UAV";
+        NetworkRouter nr = UAV.AddComponent<NetworkRouter>();
+        nr.cm = this;
+
+        AICommands ai = UAV.GetComponent<AICommands>();
+        ai.AddCommand(AICommands.CommandType.MoveTo, nearestTowerNode.gameObject);
+
+        UAV.transform.position = towerPrefab.transform.position;
+        configurationMapNodes[nearestTowerNode.row, nearestTowerNode.col].UAV = UAV;
+        ++totalUAVs;
+        return UAV;
+    }
+
     public GameObject InsertUAV(Node node)
     {
-        
         return InsertUAV(node.row, node.col);
     }
 
@@ -476,6 +492,18 @@ public class ConfigurationMap : MonoBehaviour
         ai.AddCommand(AICommands.CommandType.MoveTo, destination);
         return true;
     }
+
+    public bool StopUAV(int ID)
+    {
+        GameObject UAV = allRouters[ID].gameObject;
+
+        AICommands ai = UAV.GetComponent<AICommands>();
+
+        ai.CancelAllCommands();
+        return true;
+    }
+
+
 
     public bool MoveUser(GameObject gameObject, Vector3 destination)
     { 
