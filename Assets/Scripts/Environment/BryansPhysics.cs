@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Physics : MonoBehaviour
+public class BryansPhysics : MonoBehaviour
 {
     public float heading = 0; // could be direction vector
     public float desiredHeading = 0;
@@ -12,12 +12,12 @@ public class Physics : MonoBehaviour
     public float desiredSpeed = 0;
     private float minSpeed = 0;
     public float maxSpeed = 1;
+    public float distanceTraveled = 0;
     private Vector3 velocity = new Vector3();
 
     // Update is called once per frame
     void FixedUpdate()
     {
-
 
         // -------- compute heading --------- //
         if (desiredHeading > 360)
@@ -28,8 +28,6 @@ public class Physics : MonoBehaviour
         {
             desiredHeading = 360 + desiredHeading;
         }
-
-
 
         if (desiredHeading > heading)
         {
@@ -76,6 +74,7 @@ public class Physics : MonoBehaviour
         }
 
         speed = Mathf.Clamp(speed, minSpeed, maxSpeed);
+        distanceTraveled += speed;
 
         velocity = new Vector3(Mathf.Sin(heading * Mathf.Deg2Rad), 0, Mathf.Cos(heading * Mathf.Deg2Rad)) * speed;
 

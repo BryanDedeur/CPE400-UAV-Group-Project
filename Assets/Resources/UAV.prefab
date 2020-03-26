@@ -106,7 +106,7 @@ MonoBehaviour:
   heading: 0
   desiredHeading: 0
   turnRate: 75
-  acceleration: 0.012
+  acceleration: 0.016
   speed: 0
   desiredSpeed: 0
-  maxSpeed: 0.06
+  maxSpeed: 0.08

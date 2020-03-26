@@ -6,7 +6,7 @@ public class AICommands : MonoBehaviour
 {
     public Queue<Command> commands;
     public enum CommandType { MoveTo };
-    private Physics physics;
+    private BryansPhysics physics;
 
     private void Awake()
     {
@@ -18,54 +18,66 @@ public class AICommands : MonoBehaviour
         public Vector3 targetPos;
         public GameObject targetObject = null;
         public bool isFinished = false;
-        public Physics physics;
+        public BryansPhysics physics;
         public Transform transform;
 
-        public virtual void UpdatePhysics() { }
+        public virtual void UpdateBryansPhysics() { }
     }
 
     public class MoveTo : Command
     {
         private float timeToStop;
         private float stoppingDistance = 10;
+        float computedHeading = 0;
+        float magnitude;
 
-        public override void UpdatePhysics() {
+        public override void UpdateBryansPhysics() {
             if (physics == null)
             {
-                physics = transform.GetComponent<Physics>();
+                physics = transform.GetComponent<BryansPhysics>();
             }
 
-            physics.desiredSpeed = physics.maxSpeed;
-
-            timeToStop = physics.speed / physics.acceleration;
-            stoppingDistance = (100f * physics.acceleration * (Mathf.Pow(timeToStop, 2f)));
-
-            float computedHeading = 0;
+            timeToStop = physics.speed / (physics.acceleration);
+            //stoppingDistance = (25f * physics.acceleration * (Mathf.Pow(timeToStop, 2f)));
+            stoppingDistance = Mathf.Pow(physics.speed, 2) / (2 * physics.acceleration * Time.deltaTime);
+            //stoppingDistance = timeToStop;
 
             if (targetObject != null)
             {
+                magnitude = (transform.position - targetObject.transform.position).magnitude;
                 computedHeading = Mathf.Rad2Deg * (Mathf.Atan2(targetObject.transform.position.x - transform.position.x, (targetObject.transform.position.z - transform.position.z)));
-                if ((transform.position - targetObject.transform.position).magnitude <= (stoppingDistance))
+                if (magnitude <= (stoppingDistance))
                 {
                     physics.desiredSpeed = physics.acceleration;
-                }
-                if ((transform.position - targetObject.transform.position).magnitude < 0.03f)
+                    if (magnitude < .5f)
+                    {
+                        physics.desiredSpeed = 0;
+                        isFinished = true;
+                    }
+                } else
                 {
-                    physics.desiredSpeed = 0;
-                    isFinished = true;
+                    physics.desiredSpeed = physics.maxSpeed;
                 }
+
             } else
             {
+                magnitude = (transform.position - targetPos).magnitude;
+
                 computedHeading = Mathf.Rad2Deg * (Mathf.Atan2(targetPos.x - transform.position.x, (targetPos.z - transform.position.z)));
-                if ((transform.position - targetPos).magnitude <= (stoppingDistance))
+                if (magnitude <= (stoppingDistance))
                 {
                     physics.desiredSpeed = physics.acceleration;
+                    if (magnitude < 0.3f)
+                    {
+                        physics.desiredSpeed = 0;
+                        isFinished = true;
+                    }
                 }
-                if ((transform.position - targetPos).magnitude < 0.03f)
+                else
                 {
-                    physics.desiredSpeed = 0;
-                    isFinished = true;
+                    physics.desiredSpeed = physics.maxSpeed;
                 }
+
             }
 
             if (computedHeading < 0)
@@ -88,6 +100,17 @@ public class AICommands : MonoBehaviour
         switch (commandType)
         {
             case CommandType.MoveTo:
+                if (commands.Count > 0)
+                {
+                    if (gameObject == commands.Peek().targetObject)
+                    {
+                        print("Same");
+                    }
+                    else
+                    {
+                        print("different");
+                    }
+                }
                 command = new MoveTo();
                 command.targetObject = gameObject;
                 break;
@@ -128,7 +151,7 @@ public class AICommands : MonoBehaviour
 
         if (commands.Count > 0)
         {
-            commands.Peek().UpdatePhysics();
+            commands.Peek().UpdateBryansPhysics();
             if (commands.Peek().isFinished)
             {
                 commands.Dequeue();
