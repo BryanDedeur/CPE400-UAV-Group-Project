@@ -220,6 +220,7 @@ MonoBehaviour:
   towerPrefab: {fileID: 0}
   totalUsers: 0
   totalUAVs: 0
+  updateFrequency: 2
 --- !u!4 &310360589
 Transform:
   m_ObjectHideFlags: 0

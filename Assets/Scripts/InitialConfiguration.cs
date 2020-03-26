@@ -11,13 +11,13 @@ public class InitialConfiguration : MonoBehaviour
     private void Setup()
     {
         // Specify the configuration map settings
-        configurationMap.Setup(6f, 4, 6);
+        configurationMap.Setup(6f, 5, 6);
 
-        Node nearestNodeToTower = configurationMap.PlaceTower(.5f, .0f);
+        Node nearestNodeToTower = configurationMap.PlaceTower(.5f, .1f);
 
         List<Node> neighbors = configurationMap.GetNeighbors(nearestNodeToTower);
 
-        for (int i = 0; i < 5; ++i)
+        for (int i = 0; i < 8; ++i)
         {
             GameObject go = configurationMap.InsertUAV();
         }

@@ -26,6 +26,9 @@ public class ConfigurationMap : MonoBehaviour
     private Vector3 nodeOffset;
     private Vector3 groundOffset;
 
+    public float updateFrequency;
+    private float counter = 0;
+
 
     public Node[,] configurationMapNodes;
     public Dictionary<int, NetworkRouter> allRouters;
@@ -557,6 +560,11 @@ public class ConfigurationMap : MonoBehaviour
 
     public void Update()
     {
-        towerPrefab.GetComponent<NetworkRouter>().ComputeTransmissionPath_AStar();
+        if (counter <= 0)
+        {
+            counter = updateFrequency;
+            towerPrefab.GetComponent<NetworkRouter>().ComputeTransmissionPath_AStar();
+        }
+        counter -= Time.deltaTime;
     }
 }
