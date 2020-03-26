@@ -193,6 +193,7 @@ GameObject:
   - component: {fileID: 310360590}
   - component: {fileID: 310360588}
   - component: {fileID: 310360591}
+  - component: {fileID: 310360592}
   m_Layer: 0
   m_Name: ConfigurationMap
   m_TagString: Untagged
@@ -251,13 +252,26 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 310360587}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5761c5b4f832cc84db8de6692842e821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cm: {fileID: 0}
   emptyNodesWithConnection: []
+--- !u!114 &310360592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310360587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23247cf4ad772934e9e62c892b75fd61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateFrequency: 2
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -310,7 +324,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 20
+  orthographic size: 16
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

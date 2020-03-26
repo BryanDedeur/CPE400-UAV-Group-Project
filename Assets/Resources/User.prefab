@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 7270748233614755520}
   - component: {fileID: 7242378215312409659}
   - component: {fileID: 2818023328711081324}
+  - component: {fileID: 2553731857269407737}
+  - component: {fileID: 7840152700850254000}
   m_Layer: 0
   m_Name: User
   m_TagString: Untagged
@@ -77,3 +79,34 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &2553731857269407737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8345321435051656157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ced4fd90c8c2474b88d82ae6c1c027d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7840152700850254000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8345321435051656157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fb8674228bff18489246a78399c3416, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  heading: 0
+  desiredHeading: 0
+  turnRate: 90
+  acceleration: 0.0005
+  speed: 0
+  desiredSpeed: 0
+  maxSpeed: 0.001

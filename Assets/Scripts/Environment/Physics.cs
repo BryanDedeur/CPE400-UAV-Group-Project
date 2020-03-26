@@ -14,29 +14,24 @@ public class Physics : MonoBehaviour
     public float maxSpeed = 1;
     private Vector3 velocity = new Vector3();
 
-
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
 
 
         // -------- compute heading --------- //
-        if (desiredHeading > 360) {
-            desiredHeading = 360 - desiredHeading;
-        } else if (desiredHeading < 0) {
+        if (desiredHeading > 360)
+        {
+            desiredHeading = desiredHeading - 360;
+        }
+        else if (desiredHeading < 0)
+        {
             desiredHeading = 360 + desiredHeading;
         }
 
-        if (desiredHeading < heading)
-        {
-            if (desiredHeading - heading > 180)
-            {
-                heading += turnRate * Time.deltaTime;
-            } else
-            {
-                heading -= turnRate * Time.deltaTime;
-            }
-        } else if (desiredHeading > heading)
+
+
+        if (desiredHeading > heading)
         {
             if (desiredHeading - heading > 180)
             {
@@ -47,14 +42,25 @@ public class Physics : MonoBehaviour
                 heading += turnRate * Time.deltaTime;
             }
         }
+        else if (desiredHeading < heading)
+        {
+            if (desiredHeading - heading < -180)
+            {
+                heading += turnRate * Time.deltaTime;
+            }
+            else
+            {
+                heading -= turnRate * Time.deltaTime;
+            }
+        }
 
         if (heading > 360)
         {
-            heading = 360 - heading;
+            heading = heading - 360;
         }
         else if (heading < 0)
         {
-            heading = 360 + heading;
+            heading = heading + 360;
         }
 
         // -------- compute speed ------------ //
@@ -63,14 +69,15 @@ public class Physics : MonoBehaviour
         if (speed < desiredSpeed)
         {
             speed += acceleration * Time.deltaTime;
-        } else if (speed > desiredSpeed)
+        }
+        else if (speed > desiredSpeed)
         {
             speed -= acceleration * Time.deltaTime;
         }
 
-        speed = Mathf.Clamp(desiredSpeed, minSpeed, maxSpeed);
+        speed = Mathf.Clamp(speed, minSpeed, maxSpeed);
 
-        velocity = new Vector3(Mathf.Sin(heading * Mathf.Deg2Rad), 0, -Mathf.Cos(heading * Mathf.Deg2Rad)) * speed;
+        velocity = new Vector3(Mathf.Sin(heading * Mathf.Deg2Rad), 0, Mathf.Cos(heading * Mathf.Deg2Rad)) * speed;
 
         // -------- update position ---------- //
         transform.position += velocity;

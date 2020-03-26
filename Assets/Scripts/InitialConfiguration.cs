@@ -5,12 +5,13 @@ using UnityEngine;
 public class InitialConfiguration : MonoBehaviour
 {
     private ConfigurationMap configurationMap;
+    bool runOnce = false;
 
     // ---------- EDIT THIS FOR INITIAL ENVIRONMENT SETUP ----------- //
     private void Setup()
     {
         // Specify the configuration map settings
-        configurationMap.Setup(2f, 5, 5);
+        configurationMap.Setup(6f, 5, 5);
 
         Node nearestNodeToTower = configurationMap.PlaceTower(.5f, .0f);
 
@@ -18,9 +19,11 @@ public class InitialConfiguration : MonoBehaviour
 
         List<Node> neighbors = configurationMap.GetNeighbors(nearestNodeToTower);
 
-        for (int i = 0; i < neighbors.Count; i++)
+        foreach (Node node in configurationMap.GetAllNodes())
         {
-            configurationMap.InsertUAV(neighbors[i]);
+            GameObject go = configurationMap.InsertUAV(node);
+            configurationMap.MoveUAV(go, new Vector3(Random.RandomRange(0,20), 20, Random.RandomRange(0, 20)));
+
         }
 
     }
@@ -30,5 +33,12 @@ public class InitialConfiguration : MonoBehaviour
     {
         configurationMap = GetComponent<ConfigurationMap>();
         Setup();
+    }
+
+    
+    // MOVING UAV SAMPLE
+    private void Update()
+    {
+
     }
 }
