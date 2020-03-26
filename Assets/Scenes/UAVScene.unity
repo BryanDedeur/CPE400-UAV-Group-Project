@@ -220,7 +220,7 @@ MonoBehaviour:
   towerPrefab: {fileID: 0}
   totalUsers: 0
   totalUAVs: 0
-  updateFrequency: 2
+  updateFrequency: 1
 --- !u!4 &310360589
 Transform:
   m_ObjectHideFlags: 0
@@ -262,7 +262,7 @@ MonoBehaviour:
   cm: {fileID: 0}
   plannedNodes: []
   highestPlannedUserCount: 0
-  updateFrequency: 10
+  updateFrequency: 15
 --- !u!114 &310360592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,7 +275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23247cf4ad772934e9e62c892b75fd61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  updateFrequency: 10
+  updateFrequency: 15
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0

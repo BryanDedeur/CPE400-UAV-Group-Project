@@ -93,7 +93,7 @@ public class Algorithm : MonoBehaviour
         return coordinateList;
     }
 
-    public (List<Coordinate>, int) PlanConfigurationMap(ref int[,] userCountMap, int n_UAVs, List<Coordinate> manyCoordinatesClosestToTower)
+    public (List<Coordinate>, int) PlanConfigurationMap_Optimization(ref int[,] userCountMap, int n_UAVs, List<Coordinate> manyCoordinatesClosestToTower)
     {
         List<Coordinate> initialConfigurationCoordinate = new List<Coordinate>();
         List<Coordinate> bestConfigurationCoordinate = new List<Coordinate>();
@@ -155,6 +155,47 @@ public class Algorithm : MonoBehaviour
         return (bestConfigurationCoordinates, highestUserCount);
     }
 
+    public (List<Coordinate>, int) PlanConfigurationMap_LocalMaximum(ref int[,] userCountMap, int n_UAVs, List<Coordinate> manyCoordinatesClosestToTower)
+    {
+        int currentUserCount = 0;
+        int rows = userCountMap.GetLength(0);
+        int columns = userCountMap.GetLength(1);
+        List<Coordinate> currentCoordinates = new List<Coordinate>();
+
+        int localUserCount = -1;
+        Coordinate localBestCoordinate = new Coordinate(0, 0);
+        foreach (Coordinate coordinate in manyCoordinatesClosestToTower)
+        {
+            if (userCountMap[coordinate.r, coordinate.c] > localUserCount)
+            {
+                localUserCount = userCountMap[coordinate.r, coordinate.c];
+                localBestCoordinate = coordinate;
+            }
+        }
+        currentCoordinates.Add(localBestCoordinate);
+        currentUserCount += localUserCount;
+
+        List<Coordinate> neighborCoordinatesWithConnections = GetEmptyConnectedCoordinates(currentCoordinates, rows, columns);
+        while (currentCoordinates.Count < n_UAVs && neighborCoordinatesWithConnections.Count > 0)
+        {
+            localUserCount = -1;
+            foreach (Coordinate coordinate in neighborCoordinatesWithConnections)
+            {
+                if (userCountMap[coordinate.r, coordinate.c] > localUserCount)
+                {
+                    localUserCount = userCountMap[coordinate.r, coordinate.c];
+                    localBestCoordinate = coordinate;
+                }
+            }
+            currentCoordinates.Add(localBestCoordinate);
+            currentUserCount += localUserCount;
+
+            neighborCoordinatesWithConnections = GetEmptyConnectedCoordinates(currentCoordinates, rows, columns);
+        }
+
+        return (currentCoordinates, currentUserCount);
+    }
+
     public List<Coordinate> NodesToCoordinates(List<Node> nodeList)
     {
         List<Coordinate> coordinateList = new List<Coordinate>();
@@ -183,7 +224,8 @@ public class Algorithm : MonoBehaviour
             counter = updateFrequency;
 
             int[,] userCountMap = cm.GetUserCountMap();
-            (List<Coordinate> newConfigurationCoordinates, int users) = PlanConfigurationMap(ref userCountMap, cm.totalUAVs, NodesToCoordinates(cm.GetManyNeasestNodesFromTower()));
+            // (List<Coordinate> newConfigurationCoordinates, int users) = PlanConfigurationMap_Optimization(ref userCountMap, cm.totalUAVs, NodesToCoordinates(cm.GetManyNeasestNodesFromTower()));
+            (List<Coordinate> newConfigurationCoordinates, int users) = PlanConfigurationMap_LocalMaximum(ref userCountMap, cm.totalUAVs, NodesToCoordinates(cm.GetManyNeasestNodesFromTower()));
             plannedNodes = cm.GetNodes(newConfigurationCoordinates);
             highestPlannedUserCount = users;
 
