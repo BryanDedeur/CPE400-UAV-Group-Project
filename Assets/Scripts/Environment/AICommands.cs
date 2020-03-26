@@ -38,7 +38,7 @@ public class AICommands : MonoBehaviour
             physics.desiredSpeed = physics.maxSpeed;
 
             timeToStop = physics.speed / physics.acceleration;
-            stoppingDistance = (50f * physics.acceleration * (Mathf.Pow(timeToStop, 2f)));
+            stoppingDistance = (100f * physics.acceleration * (Mathf.Pow(timeToStop, 2f)));
 
             float computedHeading = 0;
 

@@ -219,6 +219,7 @@ MonoBehaviour:
   groundPrefab: {fileID: 0}
   towerPrefab: {fileID: 0}
   totalUsers: 0
+  totalUAVs: 0
 --- !u!4 &310360589
 Transform:
   m_ObjectHideFlags: 0
@@ -252,13 +253,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 310360587}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5761c5b4f832cc84db8de6692842e821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cm: {fileID: 0}
-  emptyNodesWithConnection: []
+  plannedNodes: []
+  highestPlannedUserCount: 0
+  updateFrequency: 20
 --- !u!114 &310360592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,7 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23247cf4ad772934e9e62c892b75fd61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  updateFrequency: 2
+  updateFrequency: 20
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0

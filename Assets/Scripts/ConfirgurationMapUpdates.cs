@@ -13,7 +13,6 @@ public class ConfirgurationMapUpdates : MonoBehaviour
     void Awake()
     {
         cm = GetComponent<ConfigurationMap>();
-        updateFrequency = 20;
     }
 
     // Update is called once per frame

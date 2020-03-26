@@ -172,13 +172,13 @@ public class Algorithm : MonoBehaviour
         cm = GetComponent<ConfigurationMap>();
         plannedNodes = new List<Node>();
         highestPlannedUserCount = 0;
-        counter = updateFrequency;
+        counter = .5f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (counter < 0)
+        if (counter <= 0)
         {
             counter = updateFrequency;
 

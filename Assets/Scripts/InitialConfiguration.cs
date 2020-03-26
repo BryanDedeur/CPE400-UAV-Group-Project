@@ -28,7 +28,7 @@ public class InitialConfiguration : MonoBehaviour
         }
         */
 
-        for (int i = 0; i < 5; ++i)
+        for (int i = 0; i < 8; ++i)
         {
             GameObject go = configurationMap.InsertUAV();
         }

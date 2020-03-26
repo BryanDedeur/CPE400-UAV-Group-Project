@@ -105,8 +105,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heading: 0
   desiredHeading: 0
-  turnRate: 50
-  acceleration: 0.004
+  turnRate: 75
+  acceleration: 0.012
   speed: 0
   desiredSpeed: 0
-  maxSpeed: 0.02
+  maxSpeed: 0.06

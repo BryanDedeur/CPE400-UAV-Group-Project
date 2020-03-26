@@ -432,7 +432,7 @@ public class ConfigurationMap : MonoBehaviour
         nr.cm = this;
 
         AICommands ai = UAV.GetComponent<AICommands>();
-        ai.AddCommand(AICommands.CommandType.MoveTo, nearestTowerNode.gameObject);
+        // ai.AddCommand(AICommands.CommandType.MoveTo, nearestTowerNode.gameObject);
 
         UAV.transform.position = towerPrefab.transform.position;
         configurationMapNodes[nearestTowerNode.row, nearestTowerNode.col].UAV = UAV;
@@ -474,15 +474,12 @@ public class ConfigurationMap : MonoBehaviour
         }
         GameObject UAV = allRouters[ID].gameObject;
 
-        if (toNode.UAV != null)
-        {
-            return false; // end if the node is already occupied
-        }
-
         toNode.UAV = UAV;
+        UAV.transform.parent = toNode.transform;
 
         AICommands ai = UAV.GetComponent<AICommands>();
         ai.AddCommand(AICommands.CommandType.MoveTo, toNode.gameObject);
+
         return true;
     }
 
