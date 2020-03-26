@@ -11,7 +11,7 @@ public class InitialConfiguration : MonoBehaviour
     private void Setup()
     {
         // Specify the configuration map settings
-        configurationMap.Setup(6f, 7, 10);
+        configurationMap.Setup(6f, 5, 5);
 
         Node nearestNodeToTower = configurationMap.PlaceTower(.5f, .0f);
 
@@ -19,17 +19,12 @@ public class InitialConfiguration : MonoBehaviour
 
         List<Node> neighbors = configurationMap.GetNeighbors(nearestNodeToTower);
 
-        //for (int i = 0; i < neighbors.Count; i++)
-        //{
-        //    configurationMap.InsertUAV(neighbors[i]);
-        //}
-
         foreach (Node node in configurationMap.GetAllNodes())
         {
-            configurationMap.InsertUAV(node);
+            GameObject go = configurationMap.InsertUAV(node);
+            configurationMap.MoveUAV(go, new Vector3(Random.RandomRange(0,20), 20, Random.RandomRange(0, 20)));
 
         }
-
 
     }
 
@@ -44,9 +39,6 @@ public class InitialConfiguration : MonoBehaviour
     // MOVING UAV SAMPLE
     private void Update()
     {
-        if (!runOnce)
-        {
-            runOnce = configurationMap.MoveUAV(configurationMap.GetNode(2, 0), configurationMap.GetNode(4, 4));
-        }
+
     }
 }

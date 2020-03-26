@@ -56,8 +56,12 @@ public class AICommands : MonoBehaviour
                 }
             } else
             {
-                // FIX THIS computedHeading = Mathf.Rad2Deg * (Mathf.Atan2(targetPos.z - transform.position.z, targetPos.x - transform.position.x));
-                if ((transform.position - targetPos).magnitude < stoppingDistance)
+                computedHeading = Mathf.Rad2Deg * (Mathf.Atan2(targetPos.x - transform.position.x, (targetPos.z - transform.position.z)));
+                if ((transform.position - targetPos).magnitude <= (stoppingDistance))
+                {
+                    physics.desiredSpeed = physics.acceleration;
+                }
+                if ((transform.position - targetPos).magnitude < 0.03f)
                 {
                     physics.desiredSpeed = 0;
                     isFinished = true;
@@ -96,6 +100,29 @@ public class AICommands : MonoBehaviour
         commands.Enqueue(command);
     }
 
+    public void AddCommand(CommandType commandType, Vector3 position)
+    {
+        Command command = new MoveTo();
+        switch (commandType)
+        {
+            case CommandType.MoveTo:
+                command = new MoveTo();
+                command.targetPos = position;
+                break;
+            default:
+                break;
+        }
+
+        command.transform = transform;
+        command.physics = physics;
+        commands.Enqueue(command);
+    }
+
+    public void CancelAllCommands()
+    {
+        commands.Clear();
+    }
+
     private void Update()
     {
 
@@ -105,7 +132,6 @@ public class AICommands : MonoBehaviour
             if (commands.Peek().isFinished)
             {
                 commands.Dequeue();
-                print(commands.Count);
             }
         }
     }

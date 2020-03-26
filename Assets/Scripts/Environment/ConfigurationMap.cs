@@ -28,7 +28,7 @@ public class ConfigurationMap : MonoBehaviour
 
     public Node[,] configurationMapNodes;
     public Dictionary<int, NetworkRouter> allRouters;
-    
+
 
     /* Places the tower and returns the nearest node to that tower, origin is at the lower right
      * @param verticalPercentage is a vertical position between 0 and 1 on the scale of the actual gridmap
@@ -55,7 +55,7 @@ public class ConfigurationMap : MonoBehaviour
             for (int r = 0; r < rows; r++)
             {
                 GameObject visual = null;
-                
+
                 if ((r % 2 == 0))
                 {
                     visual = Instantiate(nodePrefab, nodeOffset + new Vector3((Mathf.Sqrt(3) * r * (connectionRadius)) / 2, uavHeight, c * (connectionRadius)), new Quaternion());
@@ -78,7 +78,7 @@ public class ConfigurationMap : MonoBehaviour
                 nodeGameObject.name = "Node[" + r.ToString() + ", " + c.ToString() + "]";
                 nodeGameObject.transform.parent = transform;
                 nodeGameObject.transform.position = visual.transform.position;
-               
+
                 Node newNode = nodeGameObject.AddComponent<Node>();
                 newNode.row = r;
                 newNode.col = c;
@@ -161,7 +161,7 @@ public class ConfigurationMap : MonoBehaviour
         return GetNeighbors(node.row, node.col);
     }
 
-    public bool[,] GetCompressedConfigurationMap(bool withConnection=true)
+    public bool[,] GetCompressedConfigurationMap(bool withConnection = true)
     {
         bool[,] compressedConfigurationMap = new bool[rows, columns];
 
@@ -208,7 +208,7 @@ public class ConfigurationMap : MonoBehaviour
     {
         List<Node> nodeList = new List<Node>();
 
-        foreach(Coordinate coordinate in coordinates)
+        foreach (Coordinate coordinate in coordinates)
         {
             nodeList.Add(GetNode(coordinate));
         }
@@ -299,7 +299,7 @@ public class ConfigurationMap : MonoBehaviour
         }
     }
 
-    public void InsertUAV(int row, int column)
+    public GameObject InsertUAV(int row, int column)
     {
         GameObject UAV = Instantiate(UAVPrefab, configurationMapNodes[row, column].transform);
         UAV.name = "UAV";
@@ -312,11 +312,13 @@ public class ConfigurationMap : MonoBehaviour
         ai.AddCommand(AICommands.CommandType.MoveTo, configurationMapNodes[row, column].gameObject);
 
         configurationMapNodes[row, column].UAV = UAV;
+        return UAV;
     }
 
-    public void InsertUAV(Node node)
+    public GameObject InsertUAV(Node node)
     {
-        InsertUAV(node.row, node.col);
+        
+        return InsertUAV(node.row, node.col);
     }
 
     public bool MoveUAV(Node fromNode, Node toNode)
@@ -337,7 +339,40 @@ public class ConfigurationMap : MonoBehaviour
 
         AICommands ai = UAV.GetComponent<AICommands>();
         ai.AddCommand(AICommands.CommandType.MoveTo, toNode.gameObject);
-        print("ADDED COMMAND");
+        return true;
+    }
+
+    public bool MoveUAV(int ID, Node toNode)
+    {
+        if (!allRouters.ContainsKey(ID))
+        {
+            return false;
+        }
+        GameObject UAV = allRouters[ID].gameObject;
+
+        if (toNode.UAV != null)
+        {
+            return false; // end if the node is already occupied
+        }
+
+        toNode.UAV = UAV;
+
+        AICommands ai = UAV.GetComponent<AICommands>();
+        ai.AddCommand(AICommands.CommandType.MoveTo, toNode.gameObject);
+        return true;
+    }
+
+    public bool MoveUAV(GameObject gameObject, Vector3 destination)
+    {
+        AICommands ai = gameObject.GetComponent<AICommands>();
+        ai.AddCommand(AICommands.CommandType.MoveTo, destination);
+        return true;
+    }
+
+    public bool MoveUser(GameObject gameObject, Vector3 destination)
+    { 
+        AICommands ai = gameObject.GetComponent<AICommands>();
+        ai.AddCommand(AICommands.CommandType.MoveTo, destination);
         return true;
     }
 
