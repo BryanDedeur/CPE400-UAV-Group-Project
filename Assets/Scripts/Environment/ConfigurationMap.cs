@@ -303,9 +303,9 @@ public class ConfigurationMap : MonoBehaviour
     {
         Node nearestNode = null;
         float nearestDistance = Mathf.Infinity;
-        for (int c = 0; c < rows; c++)
+        for (int c = 0; c < columns; c++)
         {
-            for (int r = 0; r < columns; r++)
+            for (int r = 0; r < rows; r++)
             {
                 float currentDistance = 0;
                 if (r % 2 == 0)
@@ -337,9 +337,9 @@ public class ConfigurationMap : MonoBehaviour
     {
         Node nearestNode = null;
         float nearestDistance = Mathf.Infinity;
-        for (int c = 0; c < rows; c++)
+        for (int c = 0; c < columns; c++)
         {
-            for (int r = 0; r < columns; r++)
+            for (int r = 0; r < rows; r++)
             {
                 float currentDistance = 0;
                 if (r % 2 == 0)
