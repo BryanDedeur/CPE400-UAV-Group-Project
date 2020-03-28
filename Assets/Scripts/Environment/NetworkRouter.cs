@@ -51,7 +51,7 @@ public class NetworkRouter : MonoBehaviour
     {
         if (gameObject.transform.parent != null && gameObject.transform.parent.GetComponent<Node>() != null)
         {
-            userServing = gameObject.GetComponentInParent<Node>().numberUsers;
+            userServing = gameObject.GetComponentInParent<Node>().users.Count;
         } 
         else
         {

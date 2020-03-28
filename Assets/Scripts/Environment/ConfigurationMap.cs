@@ -14,7 +14,7 @@ public class ConfigurationMap : MonoBehaviour
     public int totalUAVs = 0;
 
     private float connectionBuffer = 1;
-    private float connectionRadius;
+    public float connectionRadius;
     private int rows;
     private int columns;
     private float groundHeight = 0;
@@ -87,8 +87,9 @@ public class ConfigurationMap : MonoBehaviour
                 newNode.row = r;
                 newNode.col = c;
                 newNode.visual = visual;
+
+                newNode.cm = this;
                 //newNode.numberUsers = Random.Range(0, 50);
-                newNode.visual.transform.localScale = new Vector3(1, .01f, 1) * newNode.numberUsers * .1f;
                 //totalUsers += newNode.numberUsers;
                 visual.transform.parent = visualContainer.transform;
                 visual.name = "Visual";
@@ -242,7 +243,7 @@ public class ConfigurationMap : MonoBehaviour
             {
                 if (configurationMapNodes[r, c] != null)
                 {
-                    userCountMap[r, c] = configurationMapNodes[r, c].numberUsers;
+                    userCountMap[r, c] = configurationMapNodes[r, c].users.Count;
                 }
                 else
                 {
@@ -305,6 +306,41 @@ public class ConfigurationMap : MonoBehaviour
         return nodeList;
     }
 
+    public Node GetNeasestNodeFromPosition(Vector3 position)
+    {
+        Node nearestNode = null;
+        float nearestDistance = Mathf.Infinity;
+        for (int c = 0; c < columns; c++)
+        {
+            for (int r = 0; r < rows; r++)
+            {
+                float currentDistance = 0;
+                if (r % 2 == 0)
+                {
+                    currentDistance = (configurationMapNodes[r, c].transform.position - position).magnitude;
+                }
+                else
+                {
+                    if (c + 1 < columns)
+                    {
+                        currentDistance = (configurationMapNodes[r, c].transform.position - position).magnitude;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                if (currentDistance < nearestDistance)
+                {
+                    nearestNode = configurationMapNodes[r, c];
+                    nearestDistance = currentDistance;
+                }
+            }
+        }
+
+        return nearestNode;
+    }
+
     public Node GetNeasestNodeFromTower()
     {
         Node nearestNode = null;
@@ -338,6 +374,8 @@ public class ConfigurationMap : MonoBehaviour
 
         return nearestNode;
     }
+
+
 
     public (Node, float) GetNeasestNodeFromTowerWithDistance()
     {
@@ -519,8 +557,11 @@ public class ConfigurationMap : MonoBehaviour
         AICommands ai = user.GetComponent<AICommands>();
         for (int i = 0; i < numberOfAICommands; i++)
         {
-            ai.AddCommand(AICommands.CommandType.MoveTo, groundOffset + new Vector3(Random.Range(0, 100) / 100f * verticalMapSize, userHeight, Random.Range(0, 100) / 100f * horizontalMapSize));
+            ai.AddCommand(AICommands.CommandType.BoundedRandomStopStartDirectionalMovement, groundOffset.x, groundOffset.x + verticalMapSize, groundOffset.z, groundOffset.z + horizontalMapSize);
         }
+
+        Node node = GetNeasestNodeFromPosition(user.transform.position);
+        node.users.Add(userComponent);
 
         return user;
     }

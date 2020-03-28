@@ -219,6 +219,7 @@ MonoBehaviour:
   groundPrefab: {fileID: 0}
   towerPrefab: {fileID: 0}
   totalUAVs: 0
+  connectionRadius: 0
   updateFrequency: 1
 --- !u!4 &310360589
 Transform:
@@ -246,7 +247,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dbc34bb23c26d843a294649780d8f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfUsers: 20
+  numberOfUsers: 30
+  numberOfUAVs: 20
+  numberOfColumns: 11
+  numberOfRows: 9
+  towerPosX: 0.545
+  towerPosZ: 0.453
 --- !u!114 &310360591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,7 +268,7 @@ MonoBehaviour:
   cm: {fileID: 0}
   plannedNodes: []
   highestPlannedUserCount: 0
-  updateFrequency: 20
+  updateFrequency: 15
 --- !u!114 &310360592
 MonoBehaviour:
   m_ObjectHideFlags: 0

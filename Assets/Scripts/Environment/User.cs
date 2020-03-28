@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class User : MonoBehaviour
 {
-    NetworkRouter connectedRouter;
+    public NetworkRouter connectedRouter;
+    public Node nearestNode;
+
 
     // Start is called before the first frame update
     void Start()
@@ -15,6 +17,6 @@ public class User : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

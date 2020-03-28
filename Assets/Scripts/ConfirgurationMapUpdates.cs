@@ -19,24 +19,6 @@ public class ConfirgurationMapUpdates : MonoBehaviour
     void Update()
     {
         
-        if (counter < 0)
-        {
-            counter = updateFrequency;
-            // Do everything after a time interval
-            for (int c = 0; c < cm.configurationMapNodes.GetLength(1); c++)
-            {
-                for (int r = 0; r < cm.configurationMapNodes.GetLength(0); r++)
-                {
-                    if (cm.configurationMapNodes[r, c] != null)
-                    {
-                        cm.configurationMapNodes[r, c].numberUsers = Random.Range(0, 10);
-                        cm.configurationMapNodes[r, c].visual.transform.localScale = new Vector3(1, .01f, 1) * cm.configurationMapNodes[r, c].numberUsers * .2f;
-                    }
-                }
-            }
 
-
-        }
-        counter -= Time.deltaTime;
     }
 }

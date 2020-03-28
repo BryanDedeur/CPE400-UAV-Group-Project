@@ -5,6 +5,13 @@ using UnityEngine;
 public class InitialConfiguration : MonoBehaviour
 {
     public int numberOfUsers;
+    public int numberOfUAVs;
+    public int numberOfColumns;
+    public int numberOfRows;
+    [Range(0,1)]
+    public float towerPosX;
+    [Range(0, 1)]
+    public float towerPosZ;
 
     private ConfigurationMap configurationMap;
     bool runOnce = false;
@@ -13,13 +20,13 @@ public class InitialConfiguration : MonoBehaviour
     private void Setup()
     {
         // Specify the configuration map settings
-        configurationMap.Setup(6f, 11, 10);
+        configurationMap.Setup(6f, numberOfRows, numberOfColumns);
 
-        Node nearestNodeToTower = configurationMap.PlaceTower(.5f, .1f);
+        Node nearestNodeToTower = configurationMap.PlaceTower(towerPosX, towerPosZ);
 
         List<Node> neighbors = configurationMap.GetNeighbors(nearestNodeToTower);
 
-        for (int i = 0; i < 50; ++i)
+        for (int i = 0; i < numberOfUAVs; ++i)
         {
             GameObject go = configurationMap.InsertUAV();
         }
