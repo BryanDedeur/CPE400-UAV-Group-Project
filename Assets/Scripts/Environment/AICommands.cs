@@ -93,6 +93,19 @@ public class AICommands : MonoBehaviour
         }
     }
 
+    public class RandomHeading : Command
+    {
+        private float timeToStop;
+        private float stoppingDistance = 10;
+        float computedHeading = 0;
+        float magnitude;
+
+        public override void UpdateBryansPhysics()
+        {
+
+        }
+    }
+
 
     public void AddCommand(CommandType commandType, GameObject gameObject)
     {

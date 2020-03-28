@@ -107,6 +107,9 @@ public class ConfigurationMap : MonoBehaviour
         columns = MaxUAVcolumns;
         horizontalMapSize = (columns + 1) * connectionRadius;
         verticalMapSize = ((Mathf.Sqrt(3) * connectionRadius) / 2) * (rows + 1);
+
+        Camera.main.orthographicSize = Mathf.Max(horizontalMapSize, verticalMapSize) / 2f;
+
         groundPrefab.transform.localScale = new Vector3(verticalMapSize, horizontalMapSize, 1);
 
         groundOffset = new Vector3(-verticalMapSize / 2f, 0, -horizontalMapSize / 2f);
@@ -537,6 +540,7 @@ public class ConfigurationMap : MonoBehaviour
 
     private void Awake()
     {
+
         allRouters = new Dictionary<int, NetworkRouter>();
         allUsers = new Dictionary<int, User>();
         if (UAVPrefab == null)

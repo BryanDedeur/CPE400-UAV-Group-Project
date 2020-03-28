@@ -19,7 +19,7 @@ public class InitialConfiguration : MonoBehaviour
 
         List<Node> neighbors = configurationMap.GetNeighbors(nearestNodeToTower);
 
-        for (int i = 0; i < 15; ++i)
+        for (int i = 0; i < 50; ++i)
         {
             GameObject go = configurationMap.InsertUAV();
         }
