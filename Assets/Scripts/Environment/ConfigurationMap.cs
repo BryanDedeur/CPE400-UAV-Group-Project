@@ -11,7 +11,6 @@ public class ConfigurationMap : MonoBehaviour
     public GameObject groundPrefab;
     public GameObject towerPrefab;
 
-    //public int totalUsers = 0;
     public int totalUAVs = 0;
 
     private float connectionBuffer = 1;

@@ -216,6 +216,43 @@ public class Algorithm : MonoBehaviour
         counter = .5f;
     }
 
+    public void DispatchUAV()
+    {
+        Dictionary<int, NetworkRouter> UAVToBeDispatchedList = new Dictionary<int, NetworkRouter>(cm.allRouters);
+        UAVToBeDispatchedList.Remove(cm.towerPrefab.GetComponent<NetworkRouter>().GetID()); // Remove tower from list
+
+        foreach (Node node in plannedNodes)
+        {
+            if (node.UAV != null) // If target node already has a UAV, then keep UAV
+            {
+                int UAV_ID = node.UAV.GetComponent<NetworkRouter>().GetID();
+                cm.StopUAV(UAV_ID);
+                cm.MoveUAV(UAV_ID, node);
+                UAVToBeDispatchedList.Remove(node.UAV.GetComponent<NetworkRouter>().GetID());
+            }
+        }
+        foreach (Node node in plannedNodes)
+        {
+            if (node.UAV == null)
+            {
+                int bestID = -1;
+                float lowestCost = Mathf.Infinity;
+                foreach(KeyValuePair<int, NetworkRouter> UAVKeyPair in UAVToBeDispatchedList)
+                {
+                    float cost = Vector3.Distance(node.transform.position, UAVKeyPair.Value.transform.position);
+                    if (cost < lowestCost)
+                    {
+                        lowestCost = cost;
+                        bestID = UAVKeyPair.Key;
+                    }
+                }
+                cm.StopUAV(bestID);
+                cm.MoveUAV(bestID, node);
+                UAVToBeDispatchedList.Remove(bestID);
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -229,11 +266,7 @@ public class Algorithm : MonoBehaviour
             plannedNodes = cm.GetNodes(newConfigurationCoordinates);
             highestPlannedUserCount = users;
 
-            for (int id = 1; id <= cm.totalUAVs; ++id)
-            {
-                cm.StopUAV(id);
-                cm.MoveUAV(id, plannedNodes[id - 1]);
-            }
+            DispatchUAV();
         }
         counter -= Time.deltaTime;
     }
