@@ -11,7 +11,7 @@ public class ConfigurationMap : MonoBehaviour
     public GameObject groundPrefab;
     public GameObject towerPrefab;
 
-    public int totalUsers = 0;
+    //public int totalUsers = 0;
     public int totalUAVs = 0;
 
     private float connectionBuffer = 1;
@@ -19,20 +19,20 @@ public class ConfigurationMap : MonoBehaviour
     private int rows;
     private int columns;
     private float groundHeight = 0;
-    private float userHeight = 1;
-    private float uavHeight = 2;
+    private float userHeight = 0.001f;
+    private float uavHeight = 6;
     private float horizontalMapSize = 0;
     private float verticalMapSize = 0;
     private Vector3 nodeOffset;
     private Vector3 groundOffset;
+    private GameObject userFolder;
 
     public float updateFrequency;
     private float counter = 0;
 
-
     public Node[,] configurationMapNodes;
     public Dictionary<int, NetworkRouter> allRouters;
-
+    public Dictionary<int, User> allUsers;
 
     /* Places the tower and returns the nearest node to that tower, origin is at the lower right
      * @param verticalPercentage is a vertical position between 0 and 1 on the scale of the actual gridmap
@@ -41,8 +41,9 @@ public class ConfigurationMap : MonoBehaviour
     */
     public Node PlaceTower(float verticalPercentage, float horizontalPercentage)
     {
-        Vector3 newPosition = groundOffset + new Vector3(verticalPercentage * verticalMapSize, towerPrefab.transform.localScale.y - 1, horizontalPercentage * horizontalMapSize);
-        towerPrefab.transform.position = newPosition;
+        Vector3 newPosition = groundOffset + new Vector3(verticalPercentage * verticalMapSize, 2 * uavHeight, horizontalPercentage * horizontalMapSize);
+        towerPrefab.transform.localScale = new Vector3(1, newPosition.y, 1);
+        towerPrefab.transform.position = new Vector3(newPosition.x, newPosition.y/2, newPosition.z);
         Node nearestNode = GetNeasestNodeFromTower();
         return nearestNode;
     }
@@ -87,9 +88,9 @@ public class ConfigurationMap : MonoBehaviour
                 newNode.row = r;
                 newNode.col = c;
                 newNode.visual = visual;
-                newNode.numberUsers = Random.Range(0, 50);
+                //newNode.numberUsers = Random.Range(0, 50);
                 newNode.visual.transform.localScale = new Vector3(1, .01f, 1) * newNode.numberUsers * .1f;
-                totalUsers += newNode.numberUsers;
+                //totalUsers += newNode.numberUsers;
                 visual.transform.parent = visualContainer.transform;
                 visual.name = "Visual";
                 configurationMapNodes[r, c] = newNode;
@@ -503,7 +504,24 @@ public class ConfigurationMap : MonoBehaviour
         return true;
     }
 
+    public GameObject InsertUser(int numberOfAICommands)
+    {
+        GameObject user = Instantiate(userPrefab, userFolder.transform);
+        User userComponent = user.GetComponent<User>();
+        allUsers.Add(allUsers.Count, userComponent);
 
+        user.name = "User" + (allUsers.Count - 1).ToString();
+
+        user.transform.position = groundOffset + new Vector3(Random.Range(0,100)/100f * verticalMapSize, userHeight, Random.Range(0, 100) / 100f * horizontalMapSize);
+
+        AICommands ai = user.GetComponent<AICommands>();
+        for (int i = 0; i < numberOfAICommands; i++)
+        {
+            ai.AddCommand(AICommands.CommandType.MoveTo, groundOffset + new Vector3(Random.Range(0, 100) / 100f * verticalMapSize, userHeight, Random.Range(0, 100) / 100f * horizontalMapSize));
+        }
+
+        return user;
+    }
 
     public bool MoveUser(GameObject gameObject, Vector3 destination)
     { 
@@ -520,7 +538,7 @@ public class ConfigurationMap : MonoBehaviour
     private void Awake()
     {
         allRouters = new Dictionary<int, NetworkRouter>();
-
+        allUsers = new Dictionary<int, User>();
         if (UAVPrefab == null)
         {
             UAVPrefab = Resources.Load("UAV") as GameObject;
@@ -532,6 +550,10 @@ public class ConfigurationMap : MonoBehaviour
             userPrefab = Resources.Load("User") as GameObject;
         }
         userPrefab.name = "User";
+
+        userFolder = new GameObject();
+        userFolder.name = "Users";
+        userFolder.transform.parent = transform;
 
 
         if (nodePrefab == null)

@@ -80,5 +80,6 @@ public class BryansPhysics : MonoBehaviour
 
         // -------- update position ---------- //
         transform.position += velocity;
+        transform.eulerAngles = new Vector3(0, heading, 0);
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class InitialConfiguration : MonoBehaviour
 {
+    public int numberOfUsers;
+
     private ConfigurationMap configurationMap;
     bool runOnce = false;
 
@@ -21,6 +23,13 @@ public class InitialConfiguration : MonoBehaviour
         {
             GameObject go = configurationMap.InsertUAV();
         }
+
+        for (int i = 0; i < numberOfUsers; ++i)
+        {
+            configurationMap.InsertUser(5);
+        }
+
+
 
     }
 

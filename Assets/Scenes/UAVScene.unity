@@ -218,7 +218,6 @@ MonoBehaviour:
   nodePrefab: {fileID: 0}
   groundPrefab: {fileID: 0}
   towerPrefab: {fileID: 0}
-  totalUsers: 0
   totalUAVs: 0
   updateFrequency: 1
 --- !u!4 &310360589
@@ -247,6 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dbc34bb23c26d843a294649780d8f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  numberOfUsers: 20
 --- !u!114 &310360591
 MonoBehaviour:
   m_ObjectHideFlags: 0
