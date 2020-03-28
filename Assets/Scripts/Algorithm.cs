@@ -223,33 +223,20 @@ public class Algorithm : MonoBehaviour
 
         foreach (Node node in plannedNodes)
         {
-            if (node.UAV != null) // If target node already has a UAV, then keep UAV
+            int bestID = -1;
+            float lowestCost = Mathf.Infinity;
+            foreach (KeyValuePair<int, NetworkRouter> UAVKeyPair in UAVToBeDispatchedList)
             {
-                int UAV_ID = node.UAV.GetComponent<NetworkRouter>().GetID();
-                cm.StopUAV(UAV_ID);
-                cm.MoveUAV(UAV_ID, node);
-                UAVToBeDispatchedList.Remove(node.UAV.GetComponent<NetworkRouter>().GetID());
-            }
-        }
-        foreach (Node node in plannedNodes)
-        {
-            if (node.UAV == null)
-            {
-                int bestID = -1;
-                float lowestCost = Mathf.Infinity;
-                foreach(KeyValuePair<int, NetworkRouter> UAVKeyPair in UAVToBeDispatchedList)
+                float cost = Vector3.Distance(node.transform.position, UAVKeyPair.Value.transform.position);
+                if (cost < lowestCost)
                 {
-                    float cost = Vector3.Distance(node.transform.position, UAVKeyPair.Value.transform.position);
-                    if (cost < lowestCost)
-                    {
-                        lowestCost = cost;
-                        bestID = UAVKeyPair.Key;
-                    }
+                    lowestCost = cost;
+                    bestID = UAVKeyPair.Key;
                 }
-                cm.StopUAV(bestID);
-                cm.MoveUAV(bestID, node);
-                UAVToBeDispatchedList.Remove(bestID);
             }
+            cm.StopUAV(bestID);
+            cm.MoveUAV(bestID, node);
+            UAVToBeDispatchedList.Remove(bestID);
         }
     }
 
