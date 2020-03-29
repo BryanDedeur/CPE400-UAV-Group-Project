@@ -149,5 +149,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   batteryLife: 1
-  batteryDrainRateRelativeToSpeed: 0.1
-  batteryDrainRateIdle: 0.01
+  batteryDrainRateRelativeToSpeed: 0.001
+  batteryDrainRateServingUsers: 0.001
+  batteryDrainRateConstant: 0.1
