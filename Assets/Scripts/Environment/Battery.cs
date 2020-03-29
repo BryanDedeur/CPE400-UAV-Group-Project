@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Battery : MonoBehaviour
 {
-    public float batteryLife = 1;
+    public float batteryLife = 10;
     public float batteryDrainRateRelativeToSpeed;
     public float batteryDrainRateIdle;
 
@@ -27,8 +27,10 @@ public class Battery : MonoBehaviour
             physics.desiredHeading = 0;
             physics.desiredVerticalHeading = 0;
             router.connectedRouters.Clear();
-        } else
+        } 
+        else
         {
+            /*
             if (physics.speed > 0)
             {
                 batteryLife -= physics.speed / physics.maxSpeed * batteryDrainRateRelativeToSpeed * Time.deltaTime;
@@ -37,6 +39,8 @@ public class Battery : MonoBehaviour
             {
                 batteryLife -= batteryDrainRateIdle * Time.deltaTime;
             }
+            */
+            batteryLife -= batteryDrainRateIdle * Time.deltaTime;
         }
         
     }

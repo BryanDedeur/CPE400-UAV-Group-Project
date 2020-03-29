@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class InitialConfiguration : MonoBehaviour
 {
+    public bool renderBehindTheScene;
     public int numberOfUsers;
     public int numberOfUAVs;
     public int numberOfColumns;
@@ -15,6 +16,8 @@ public class InitialConfiguration : MonoBehaviour
 
     private ConfigurationMap configurationMap;
     bool runOnce = false;
+
+    private bool previousRenderToggle;
 
     // ---------- EDIT THIS FOR INITIAL ENVIRONMENT SETUP ----------- //
     private void Setup()
@@ -40,17 +43,36 @@ public class InitialConfiguration : MonoBehaviour
 
     }
 
+    private void ToggleRender(bool toggle)
+    {
+        Component[] allRenderers = configurationMap.GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in allRenderers)
+        {
+            if (renderer.name.Contains("Visual") || renderer.name.Contains("Node"))
+            {
+                renderer.enabled = toggle;
+            }
+        }
+    }
+
     // ---------- DONT TOUCH ----------- //
     private void Start()
     {
         configurationMap = GetComponent<ConfigurationMap>();
         Setup();
+
+        previousRenderToggle = renderBehindTheScene;
+        ToggleRender(renderBehindTheScene);
     }
 
     
     // MOVING UAV SAMPLE
     private void Update()
     {
-
+        if (previousRenderToggle != renderBehindTheScene)
+        {
+            previousRenderToggle = renderBehindTheScene;
+            ToggleRender(renderBehindTheScene);
+        }
     }
 }

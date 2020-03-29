@@ -221,6 +221,7 @@ MonoBehaviour:
   totalUAVs: 0
   connectionRadius: 0
   updateFrequency: 1
+  totalConnectedUsers: 0
 --- !u!4 &310360589
 Transform:
   m_ObjectHideFlags: 0
@@ -247,8 +248,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dbc34bb23c26d843a294649780d8f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfUsers: 100
-  numberOfUAVs: 20
+  renderBehindTheScene: 0
+  numberOfUsers: 200
+  numberOfUAVs: 75
   numberOfColumns: 11
   numberOfRows: 9
   towerPosX: 0.545
@@ -268,7 +270,7 @@ MonoBehaviour:
   cm: {fileID: 0}
   plannedNodes: []
   highestPlannedUserCount: 0
-  updateFrequency: 20
+  updateFrequency: 30
 --- !u!114 &310360592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,7 +283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23247cf4ad772934e9e62c892b75fd61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  updateFrequency: 20
+  updateFrequency: 30
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
