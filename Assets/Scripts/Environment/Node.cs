@@ -49,11 +49,11 @@ public class Node : MonoBehaviour
                     users.Remove(users[i]);
                 } else
                 {
-                    Debug.DrawLine(transform.position, users[i].transform.position, new Color(.5f, .5f, 0f));
+                    //Debug.DrawLine(transform.position, users[i].transform.position, new Color(.5f, .5f, 0f));
                 }
             } else
             {
-                Debug.DrawLine(transform.position, users[i].transform.position, new Color(.5f, .5f, 0f));
+                //Debug.DrawLine(transform.position, users[i].transform.position, new Color(.5f, .5f, 0f));
             }
 
         }

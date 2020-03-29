@@ -64,6 +64,9 @@ MonoBehaviour:
   acceleration: 0.0003
   speed: 0
   desiredSpeed: 0
+  verticalHeading: 90
+  desiredVerticalHeading: 90
+  climbRate: 0
   maxSpeed: 0.01
   distanceTraveled: 0
 --- !u!114 &114424841776337254

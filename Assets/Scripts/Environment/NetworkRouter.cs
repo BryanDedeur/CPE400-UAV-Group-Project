@@ -10,6 +10,9 @@ public class NetworkRouter : MonoBehaviour
 
     static private int IDcounter = 0;
 
+    public Color routerToRouterColor = new Color(.5f,.5f,1);
+    public Color routerToUserColor = new Color(1, .5f, .5f);
+
     public ConfigurationMap cm;
     public Dictionary<int, NetworkRouter> connectedRouters;
     public List<NetworkRouter> displayingConnectedRouters;
@@ -19,6 +22,7 @@ public class NetworkRouter : MonoBehaviour
     public float connectionLength = 0f;
     public int numberOfHops = 0;
     public NetworkRouter parentRouter = null;
+    public int numberOfUsers = 0;
     private int userServing = 0;
 
     private struct Node_Astar
@@ -61,10 +65,27 @@ public class NetworkRouter : MonoBehaviour
         cm.GetNearbyRouters(this);
         displayingConnectedRouters = connectedRouters.Values.ToList();
 
-        foreach (KeyValuePair<int, NetworkRouter> connection in connectedRouters)
+        numberOfUsers = 0;
+        if (numberOfHops > 0)
         {
-            Debug.DrawLine(transform.position, connection.Value.transform.position, new Color(.5f,.5f,1f));
+            foreach (KeyValuePair<int, NetworkRouter> connection in connectedRouters)
+            {
+                Debug.DrawLine(transform.position, connection.Value.transform.position, routerToRouterColor);
+            }
+            Node node = transform.GetComponentInParent<Node>();
+            if (node != null)
+            {
+                foreach (User user in node.users)
+                {
+                    if ((user.transform.position - transform.position).magnitude < cm.connectionRadius)
+                    {
+                        ++numberOfUsers;
+                        Debug.DrawLine(transform.position, user.transform.position, routerToUserColor);
+                    }
+                }
+            }
         }
+
     }
 
     public void ComputeTransmissionPath_AStar()

@@ -31,6 +31,7 @@ public class ConfigurationMap : MonoBehaviour
 
     public Node[,] configurationMapNodes;
     public Dictionary<int, NetworkRouter> allRouters;
+    public int totalConnectedUsers;
     public Dictionary<int, User> allUsers;
 
     /* Places the tower and returns the nearest node to that tower, origin is at the lower right
@@ -454,7 +455,7 @@ public class ConfigurationMap : MonoBehaviour
     {
         GameObject UAV = Instantiate(UAVPrefab, configurationMapNodes[row, column].transform);
         UAV.name = "UAV";
-        NetworkRouter nr = UAV.AddComponent<NetworkRouter>();
+        NetworkRouter nr = UAV.GetComponent<NetworkRouter>();
         nr.cm = this;
 
         UAV.transform.position = towerPrefab.transform.position;
@@ -472,7 +473,7 @@ public class ConfigurationMap : MonoBehaviour
         Node nearestTowerNode = GetNeasestNodeFromTower();
         GameObject UAV = Instantiate(UAVPrefab, configurationMapNodes[nearestTowerNode.row, nearestTowerNode.col].transform);
         UAV.name = "UAV";
-        NetworkRouter nr = UAV.AddComponent<NetworkRouter>();
+        NetworkRouter nr = UAV.GetComponent<NetworkRouter>();
         nr.cm = this;
 
         AICommands ai = UAV.GetComponent<AICommands>();
@@ -632,5 +633,11 @@ public class ConfigurationMap : MonoBehaviour
             towerPrefab.GetComponent<NetworkRouter>().ComputeTransmissionPath_AStar();
         }
         counter -= Time.deltaTime;
+
+        totalConnectedUsers = 0;
+        foreach (KeyValuePair<int, NetworkRouter> router in allRouters)
+        {
+            totalConnectedUsers += router.Value.numberOfUsers;
+        }
     }
 }

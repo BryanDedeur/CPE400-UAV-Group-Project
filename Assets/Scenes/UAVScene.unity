@@ -247,12 +247,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dbc34bb23c26d843a294649780d8f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfUsers: 30
+  numberOfUsers: 100
   numberOfUAVs: 20
   numberOfColumns: 11
   numberOfRows: 9
   towerPosX: 0.545
-  towerPosZ: 0.453
+  towerPosZ: 0
 --- !u!114 &310360591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,7 +268,7 @@ MonoBehaviour:
   cm: {fileID: 0}
   plannedNodes: []
   highestPlannedUserCount: 0
-  updateFrequency: 15
+  updateFrequency: 20
 --- !u!114 &310360592
 MonoBehaviour:
   m_ObjectHideFlags: 0

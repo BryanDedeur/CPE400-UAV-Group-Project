@@ -58,8 +58,10 @@ public class AICommands : MonoBehaviour
                 {
                     physics.desiredSpeed = physics.maxSpeed;
                 }
+                physics.desiredVerticalHeading = 45f + Mathf.Rad2Deg * (Mathf.Atan2(transform.position.y, targetObject.transform.position.y));
 
-            } else
+            }
+            else
             {
                 magnitude = (transform.position - targetPos).magnitude;
 
@@ -77,6 +79,8 @@ public class AICommands : MonoBehaviour
                 {
                     physics.desiredSpeed = physics.maxSpeed;
                 }
+                physics.desiredVerticalHeading = 45f + Mathf.Rad2Deg * (Mathf.Atan2(targetPos.y, transform.position.y));
+
 
             }
 
@@ -87,6 +91,7 @@ public class AICommands : MonoBehaviour
             {
                 computedHeading = computedHeading - 360;
             }
+
 
             physics.desiredHeading = computedHeading;
 

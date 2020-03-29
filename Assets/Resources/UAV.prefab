@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 2248878521069058257}
   - component: {fileID: 1661743892036656014}
   - component: {fileID: 7219126731027530584}
+  - component: {fileID: 114367881271669668}
+  - component: {fileID: 114963213513745478}
   m_Layer: 0
   m_Name: UAV
   m_TagString: Untagged
@@ -109,5 +111,43 @@ MonoBehaviour:
   acceleration: 0.016
   speed: 0
   desiredSpeed: 0
+  verticalHeading: 90
+  desiredVerticalHeading: 90
+  climbRate: 30
   maxSpeed: 0.08
   distanceTraveled: 0
+--- !u!114 &114367881271669668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5739633684911547640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceed767ebea8aef4692bfa6f8ab7d59d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  routerToRouterColor: {r: 0.5, g: 0.5, b: 1, a: 1}
+  routerToUserColor: {r: 1, g: 0, b: 0, a: 1}
+  cm: {fileID: 0}
+  displayingConnectedRouters: []
+  connectionLength: 0
+  numberOfHops: 0
+  parentRouter: {fileID: 0}
+  numberOfUsers: 0
+--- !u!114 &114963213513745478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5739633684911547640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 441e9fdc25a02cc4cb813ec241f02212, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  batteryLife: 1
+  batteryDrainRateRelativeToSpeed: 0.1
+  batteryDrainRateIdle: 0.01
