@@ -6,7 +6,8 @@ public class Battery : MonoBehaviour
 {
     public float batteryLife = 10;
     public float batteryDrainRateRelativeToSpeed;
-    public float batteryDrainRateIdle;
+    public float batteryDrainRateServingUsers;
+    public float batteryDrainRateConstant;
 
     private BryansPhysics physics;
     private NetworkRouter router;
@@ -23,25 +24,18 @@ public class Battery : MonoBehaviour
     {
         if (batteryLife <= 0)
         {
+            router.connectedRouters.Clear();
             physics.desiredSpeed = 0;
             physics.desiredHeading = 0;
             physics.desiredVerticalHeading = 0;
-            router.connectedRouters.Clear();
         } 
         else
         {
-            /*
             if (physics.speed > 0)
             {
                 batteryLife -= physics.speed / physics.maxSpeed * batteryDrainRateRelativeToSpeed * Time.deltaTime;
             }
-            else
-            {
-                batteryLife -= batteryDrainRateIdle * Time.deltaTime;
-            }
-            */
-            batteryLife -= batteryDrainRateIdle * Time.deltaTime;
+            batteryLife -= router.numberOfUsers * batteryDrainRateServingUsers * Time.deltaTime + batteryDrainRateConstant * Time.deltaTime;
         }
-        
     }
 }
