@@ -37,10 +37,12 @@ public class AICommands : MonoBehaviour
                 physics = transform.GetComponent<BryansPhysics>();
             }
 
-            timeToStop = physics.speed / (physics.acceleration);
-            //stoppingDistance = (25f * physics.acceleration * (Mathf.Pow(timeToStop, 2f)));
-            stoppingDistance = Mathf.Pow(physics.speed, 2) / (2 * physics.acceleration * Time.deltaTime);
+            timeToStop = (physics.speed) / (physics.acceleration);
+            //stoppingDistance = 2* (1f * physics.acceleration * (Mathf.Pow(timeToStop, 2f)));
+            //stoppingDistance = 10000f * Mathf.Pow(physics.speed, 2) / (physics.acceleration);
             //stoppingDistance = timeToStop;
+
+            stoppingDistance =  physics.speed * timeToStop + .5f * physics.acceleration * Mathf.Pow(timeToStop, 2f);
 
             if (targetObject != null)
             {
@@ -48,8 +50,8 @@ public class AICommands : MonoBehaviour
                 computedHeading = Mathf.Rad2Deg * (Mathf.Atan2(targetObject.transform.position.x - transform.position.x, (targetObject.transform.position.z - transform.position.z)));
                 if (magnitude <= (stoppingDistance))
                 {
-                    physics.desiredSpeed = physics.acceleration;
-                    if (magnitude < .5f)
+                    physics.desiredSpeed = 0;
+                    if (magnitude < .1f)
                     {
                         physics.desiredSpeed = 0;
                         isFinished = true;
@@ -58,7 +60,7 @@ public class AICommands : MonoBehaviour
                 {
                     physics.desiredSpeed = physics.maxSpeed;
                 }
-                physics.desiredVerticalHeading = 45f + Mathf.Rad2Deg * (Mathf.Atan2(transform.position.y, targetObject.transform.position.y));
+                physics.desiredAltitude = targetObject.transform.position.y;
 
             }
             else
@@ -79,7 +81,7 @@ public class AICommands : MonoBehaviour
                 {
                     physics.desiredSpeed = physics.maxSpeed;
                 }
-                physics.desiredVerticalHeading = 45f + Mathf.Rad2Deg * (Mathf.Atan2(targetPos.y, transform.position.y));
+                physics.desiredAltitude = targetPos.y;
 
 
             }

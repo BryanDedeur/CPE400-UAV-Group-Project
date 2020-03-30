@@ -13,6 +13,8 @@ public class NetworkRouter : MonoBehaviour
     public Color routerToRouterColor = new Color(.5f,.5f,1);
     public Color routerToUserColor = new Color(1, .5f, .5f);
 
+    public Battery battery;
+
     public ConfigurationMap cm;
     public Dictionary<int, NetworkRouter> connectedRouters;
     public List<NetworkRouter> displayingConnectedRouters;
@@ -48,43 +50,53 @@ public class NetworkRouter : MonoBehaviour
         displayingConnectedRouters = new List<NetworkRouter>();
         ID = IDcounter++;
         cm.allRouters.Add(this.ID, this);
+        battery = transform.GetComponent<Battery>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (gameObject.transform.parent != null && gameObject.transform.parent.GetComponent<Node>() != null)
-        {
-            userServing = gameObject.GetComponentInParent<Node>().users.Count;
-        } 
-        else
-        {
-            userServing = 0;
-        }
 
-        cm.GetNearbyRouters(this);
-        displayingConnectedRouters = connectedRouters.Values.ToList();
+            if (gameObject.transform.parent != null && gameObject.transform.parent.GetComponent<Node>() != null)
+            {
+                userServing = gameObject.GetComponentInParent<Node>().users.Count;
+            }
+            else
+            {
+                userServing = 0;
+            }
 
-        numberOfUsers = 0;
+            cm.GetNearbyRouters(this);
+            displayingConnectedRouters = connectedRouters.Values.ToList();
+
+            numberOfUsers = 0;
         if (numberOfHops > 0)
         {
-            foreach (KeyValuePair<int, NetworkRouter> connection in connectedRouters)
+            if (battery == null)
             {
-                Debug.DrawLine(transform.position, connection.Value.transform.position, routerToRouterColor);
+                battery = GetComponent<Battery>();
             }
-            Node node = transform.GetComponentInParent<Node>();
-            if (node != null)
+            else if (battery.running)
             {
-                foreach (User user in node.users)
+                foreach (KeyValuePair<int, NetworkRouter> connection in connectedRouters)
                 {
-                    if ((user.transform.position - transform.position).magnitude < cm.connectionRadius)
+                    Debug.DrawLine(transform.position, connection.Value.transform.position, routerToRouterColor);
+                }
+                Node node = transform.GetComponentInParent<Node>();
+                if (node != null)
+                {
+                    foreach (User user in node.users)
                     {
-                        ++numberOfUsers;
-                        Debug.DrawLine(transform.position, user.transform.position, routerToUserColor);
+                        if ((user.transform.position - transform.position).magnitude < cm.connectionRadius)
+                        {
+                            ++numberOfUsers;
+                            Debug.DrawLine(transform.position, user.transform.position, routerToUserColor);
+                        }
                     }
                 }
             }
         }
+
 
     }
 

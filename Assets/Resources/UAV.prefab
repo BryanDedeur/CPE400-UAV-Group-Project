@@ -105,16 +105,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fb8674228bff18489246a78399c3416, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tolerance: 0.2
   heading: 0
   desiredHeading: 0
   turnRate: 75
-  acceleration: 0.016
+  acceleration: 2
   speed: 0
   desiredSpeed: 0
-  verticalHeading: 90
-  desiredVerticalHeading: 90
-  climbRate: 30
-  maxSpeed: 0.08
+  desiredAltitude: 6
+  climbRate: 3
+  maxSpeed: 10
   distanceTraveled: 0
 --- !u!114 &114367881271669668
 MonoBehaviour:
@@ -130,6 +130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   routerToRouterColor: {r: 0.5, g: 0.5, b: 1, a: 1}
   routerToUserColor: {r: 1, g: 0, b: 0, a: 1}
+  battery: {fileID: 0}
   cm: {fileID: 0}
   displayingConnectedRouters: []
   connectionLength: 0
@@ -150,5 +151,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   batteryLife: 1
   batteryDrainRateRelativeToSpeed: 0.001
-  batteryDrainRateServingUsers: 0.001
-  batteryDrainRateConstant: 0.1
+  batteryDrainRateServingUsers: 0.005
+  batteryDrainRateConstant: 0.05
+  running: 0

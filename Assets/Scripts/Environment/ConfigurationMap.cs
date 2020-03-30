@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Coordinate = Algorithm.Coordinate;
+using System;
 
 public class ConfigurationMap : MonoBehaviour
 {
@@ -537,11 +538,16 @@ public class ConfigurationMap : MonoBehaviour
 
     public bool StopUAV(int ID)
     {
-        GameObject UAV = allRouters[ID].gameObject;
+        try
+        {
+            GameObject UAV = allRouters[ID].gameObject;
+            AICommands ai = UAV.GetComponent<AICommands>();
+            ai.CancelAllCommands();
+        } catch (Exception e)
+        {
 
-        AICommands ai = UAV.GetComponent<AICommands>();
+        }
 
-        ai.CancelAllCommands();
         return true;
     }
 
@@ -553,7 +559,7 @@ public class ConfigurationMap : MonoBehaviour
 
         user.name = "User" + (allUsers.Count - 1).ToString();
 
-        user.transform.position = groundOffset + new Vector3(Random.Range(0,100)/100f * verticalMapSize, userHeight, Random.Range(0, 100) / 100f * horizontalMapSize);
+        user.transform.position = groundOffset + new Vector3(UnityEngine.Random.Range(0,100)/100f * verticalMapSize, userHeight, UnityEngine.Random.Range(0, 100) / 100f * horizontalMapSize);
 
         AICommands ai = user.GetComponent<AICommands>();
         for (int i = 0; i < numberOfAICommands; i++)

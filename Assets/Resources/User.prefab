@@ -61,13 +61,12 @@ MonoBehaviour:
   heading: 0
   desiredHeading: 0
   turnRate: 90
-  acceleration: 0.0003
+  acceleration: 0.02
   speed: 0
   desiredSpeed: 0
-  verticalHeading: 90
-  desiredVerticalHeading: 90
+  desiredAltitude: 0
   climbRate: 0
-  maxSpeed: 0.01
+  maxSpeed: 0.5
   distanceTraveled: 0
 --- !u!114 &114424841776337254
 MonoBehaviour:

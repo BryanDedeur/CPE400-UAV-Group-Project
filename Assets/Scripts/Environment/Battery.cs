@@ -11,7 +11,7 @@ public class Battery : MonoBehaviour
 
     private BryansPhysics physics;
     private NetworkRouter router;
-    private bool running;
+    public bool running = true;
 
     // Start is called before the first frame update
     void Start()
@@ -36,7 +36,7 @@ public class Battery : MonoBehaviour
             }
             physics.desiredSpeed = 0;
             physics.desiredHeading = 0;
-            physics.desiredVerticalHeading = 0;
+            physics.desiredAltitude = 0;
         } 
         else
         {
