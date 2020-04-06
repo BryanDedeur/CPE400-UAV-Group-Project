@@ -9,7 +9,7 @@ public class InitialConfiguration : MonoBehaviour
     public int numberOfUAVs;
     public int numberOfColumns;
     public int numberOfRows;
-    [Range(0,1)]
+    [Range(0, 1)]
     public float towerPosX;
     [Range(0, 1)]
     public float towerPosZ;

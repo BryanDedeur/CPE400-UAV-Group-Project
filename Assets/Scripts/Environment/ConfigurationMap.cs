@@ -529,6 +529,38 @@ public class ConfigurationMap : MonoBehaviour
         return true;
     }
 
+    public bool MoveUAVToTower(int ID)
+    {
+        if (!allRouters.ContainsKey(ID))
+        {
+            return false;
+        }
+        GameObject UAV = allRouters[ID].gameObject;
+
+        UAV.transform.parent = towerPrefab.transform;
+
+        AICommands ai = UAV.GetComponent<AICommands>();
+        ai.AddCommand(AICommands.CommandType.MoveTo, towerPrefab);
+
+        return true;
+    }
+
+    public bool MoveUAVToTower(Node fromNode)
+    {
+        if (fromNode.UAV == null)
+        {
+            return false;
+        }
+        GameObject UAV = fromNode.UAV;
+
+        UAV.transform.parent = towerPrefab.transform;
+
+        AICommands ai = UAV.GetComponent<AICommands>();
+        ai.AddCommand(AICommands.CommandType.MoveTo, towerPrefab);
+
+        return true;
+    }
+
     public bool MoveUAV(GameObject gameObject, Vector3 destination)
     {
         AICommands ai = gameObject.GetComponent<AICommands>();
