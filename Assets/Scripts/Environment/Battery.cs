@@ -42,9 +42,9 @@ public class Battery : MonoBehaviour
         {
             if (physics.speed > 0)
             {
-                batteryLife -= physics.speed / physics.maxSpeed * batteryDrainRateRelativeToSpeed * Time.deltaTime;
+                batteryLife -= (((physics.speed / physics.maxSpeed) * batteryDrainRateRelativeToSpeed) * Time.deltaTime);
             }
-            batteryLife -= router.numberOfUsers * batteryDrainRateServingUsers * Time.deltaTime + batteryDrainRateConstant * Time.deltaTime;
+            batteryLife -= (((router.numberOfUsers * batteryDrainRateServingUsers) * Time.deltaTime) + (batteryDrainRateConstant * Time.deltaTime));
         }
     }
 }

@@ -152,5 +152,5 @@ MonoBehaviour:
   batteryLife: 1
   batteryDrainRateRelativeToSpeed: 0.001
   batteryDrainRateServingUsers: 0.005
-  batteryDrainRateConstant: 0.05
+  batteryDrainRateConstant: 0.001
   running: 0
