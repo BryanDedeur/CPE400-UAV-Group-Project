@@ -600,7 +600,7 @@ public class ConfigurationMap : MonoBehaviour
         }
 
         Node node = GetNeasestNodeFromPosition(user.transform.position);
-        node.users.Add(userComponent);
+        node.users.Add(userComponent.GetID(), userComponent);
 
         return user;
     }

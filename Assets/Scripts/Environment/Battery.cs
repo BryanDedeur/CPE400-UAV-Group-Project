@@ -44,7 +44,7 @@ public class Battery : MonoBehaviour
             {
                 batteryLife -= (((physics.speed / physics.maxSpeed) * batteryDrainRateRelativeToSpeed) * Time.deltaTime);
             }
-            batteryLife -= (((router.numberOfUsers * batteryDrainRateServingUsers) * Time.deltaTime) + (batteryDrainRateConstant * Time.deltaTime));
+            batteryLife -= (((router.userServing.Count * batteryDrainRateServingUsers) * Time.deltaTime) + (batteryDrainRateConstant * Time.deltaTime));
         }
     }
 }
