@@ -13,6 +13,8 @@ public class Battery : MonoBehaviour
     private NetworkRouter router;
     public bool running = true;
 
+    public bool requestStop = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,16 +26,8 @@ public class Battery : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (batteryLife <= 0)
+        if (batteryLife <= 0 || requestStop)
         {
-            if (running)
-            {
-                router.cm.allRouters.Remove(router.GetID());
-                router.connectedRouters.Clear();
-                router.transform.parent.GetComponent<Node>().UAV = null;
-                router.transform.parent = router.transform.parent.transform.parent;
-                running = false;
-            }
             physics.desiredSpeed = 0;
             physics.desiredHeading = 0;
             physics.desiredAltitude = 0;
