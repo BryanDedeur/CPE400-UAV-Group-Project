@@ -137,6 +137,8 @@ MonoBehaviour:
   numberOfHops: 0
   parentRouter: {fileID: 0}
   numberOfUsers: 0
+  disconnectTimeDuration: 5
+  disconnectTimeRemaining: 5
 --- !u!114 &114963213513745478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,3 +156,4 @@ MonoBehaviour:
   batteryDrainRateServingUsers: 0.005
   batteryDrainRateConstant: 0.001
   running: 0
+  requestStop: 0

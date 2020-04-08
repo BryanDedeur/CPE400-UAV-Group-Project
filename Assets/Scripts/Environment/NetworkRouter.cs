@@ -27,6 +27,13 @@ public class NetworkRouter : MonoBehaviour
     public int numberOfUsers = 0;
     private int userServing = 0;
 
+    public float disconnectTimeDuration = 2f;
+    public float disconnectTimeRemaining = 2f;
+    private bool disconnected = false;
+
+    private bool batteryLow = false;
+    private AICommands command;
+
     private struct Node_Astar
     {
         public float pathCost;
@@ -51,33 +58,39 @@ public class NetworkRouter : MonoBehaviour
         ID = IDcounter++;
         cm.allRouters.Add(this.ID, this);
         battery = transform.GetComponent<Battery>();
+        command = GetComponent<AICommands>();
     }
 
     // Update is called once per frame
     void Update()
     {
 
-            if (gameObject.transform.parent != null && gameObject.transform.parent.GetComponent<Node>() != null)
-            {
-                userServing = gameObject.GetComponentInParent<Node>().users.Count;
-            }
-            else
-            {
-                userServing = 0;
-            }
+        if (gameObject.transform.parent != null && gameObject.transform.parent.GetComponent<Node>() != null)
+        {
+            userServing = gameObject.GetComponentInParent<Node>().users.Count;
+        }
+        else
+        {
+            userServing = 0;
+        }
 
-            cm.GetNearbyRouters(this);
-            displayingConnectedRouters = connectedRouters.Values.ToList();
+        cm.GetNearbyRouters(this);
+        displayingConnectedRouters = connectedRouters.Values.ToList();
 
-            numberOfUsers = 0;
+        numberOfUsers = 0;
         if (numberOfHops > 0)
         {
             if (battery == null)
             {
                 battery = GetComponent<Battery>();
             }
-            else if (battery.running)
+            if (battery.running)
             {
+                if (disconnected)
+                {
+                    cm.StopUAV(GetID());
+                    disconnected = false;
+                }
                 foreach (KeyValuePair<int, NetworkRouter> connection in connectedRouters)
                 {
                     Debug.DrawLine(transform.position, connection.Value.transform.position, routerToRouterColor);
@@ -96,7 +109,42 @@ public class NetworkRouter : MonoBehaviour
                 }
             }
         }
-
+        if (battery == null)
+        {
+            battery = GetComponent<Battery>();
+        }
+        else if (battery.batteryLife <= 0.02)
+        {
+            if (!batteryLow)
+            {
+                transform.parent.GetComponent<Node>().UAV = null;
+                cm.StopUAV(GetID());
+                cm.MoveUAVToTower(GetID());
+                cm.allRouters.Remove(GetID());
+                connectedRouters.Clear();
+                transform.parent = transform.parent.transform.parent;
+                batteryLow = true;
+                battery.running = false;
+            }
+            else
+            {   
+                if (command.commands.Count == 0)
+                {
+                    battery.requestStop = true;
+                }
+            }
+        }
+        else if (numberOfHops == 0 && connectionLength == Mathf.Infinity)
+        {
+            if (disconnectTimeRemaining < 0 && !batteryLow)
+            {
+                disconnected = true;
+                disconnectTimeRemaining = disconnectTimeDuration;
+                cm.StopUAV(GetID());
+                cm.MoveUAVToTower(GetID());
+            }
+            disconnectTimeRemaining -= Time.deltaTime;
+        }
 
     }
 

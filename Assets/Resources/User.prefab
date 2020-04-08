@@ -58,6 +58,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fb8674228bff18489246a78399c3416, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tolerance: 0.2
   heading: 0
   desiredHeading: 0
   turnRate: 90
