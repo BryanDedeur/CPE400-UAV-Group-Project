@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class NetworkRouter : MonoBehaviour
 {
-    static private int maximumUserCapacity = 5;
-    static private float userConnectionDistance = 10f;
+    static private int maximumUserCapacity = 2;
+    static private double maximumMillisecondTimerPerPriority = 250.0f;
 
     static private int IDcounter = 0;
 
@@ -25,7 +25,8 @@ public class NetworkRouter : MonoBehaviour
     public int numberOfHops = 0;
     public NetworkRouter parentRouter = null;
     public int numberOfUsers = 0;
-    private int userServing = 0;
+
+    public Dictionary<int, User> userServing;
 
     public float disconnectTimeDuration = 2f;
     public float disconnectTimeRemaining = 2f;
@@ -55,6 +56,7 @@ public class NetworkRouter : MonoBehaviour
     {
         connectedRouters = new Dictionary<int, NetworkRouter>();
         displayingConnectedRouters = new List<NetworkRouter>();
+        userServing = new Dictionary<int, User>();
         ID = IDcounter++;
         cm.allRouters.Add(this.ID, this);
         battery = transform.GetComponent<Battery>();
@@ -64,6 +66,8 @@ public class NetworkRouter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        cm.GetNearbyRouters(this);
+        displayingConnectedRouters = connectedRouters.Values.ToList();
 
         if (gameObject.transform.parent != null && gameObject.transform.parent.GetComponent<Node>() != null)
         {
@@ -98,17 +102,56 @@ public class NetworkRouter : MonoBehaviour
                 Node node = transform.GetComponentInParent<Node>();
                 if (node != null)
                 {
-                    foreach (User user in node.users)
+                    if (userServing.Count > 0)
                     {
-                        if ((user.transform.position - transform.position).magnitude < cm.connectionRadius)
+                        List<int> removingIDs = new List<int>();
+                        foreach (KeyValuePair<int, User> userKeyPair in userServing)
                         {
-                            ++numberOfUsers;
-                            Debug.DrawLine(transform.position, user.transform.position, routerToUserColor);
+                            if (userKeyPair.Value.TimeSinceConnected().TotalMilliseconds > maximumMillisecondTimerPerPriority * userKeyPair.Value.priority || !node.users.ContainsKey(userKeyPair.Key) || (userKeyPair.Value.transform.position - transform.position).magnitude > cm.connectionRadius)
+                            {
+                                removingIDs.Add(userKeyPair.Key);
+                            }
+                            else
+                            {
+                                Debug.DrawLine(transform.position, userKeyPair.Value.transform.position, routerToUserColor);
+                            }
+                        }
+                        foreach (int id in removingIDs)
+                        {
+                            userServing[id].DisconnectFromRouter();
+                            userServing.Remove(id);
+                        }
+                    }
+                    if (userServing.Count < maximumUserCapacity)
+                    {
+                        double highestImpatientScore = 0;
+                        int highestID = -1;
+                        foreach (KeyValuePair<int, User> userKeyPair in node.users)
+                        {
+                            if ((userKeyPair.Value.transform.position - transform.position).magnitude < cm.connectionRadius)
+                            {
+                                ++numberOfUsers;
+                                if (!userServing.ContainsKey(userKeyPair.Key))
+                                {
+                                    double impatientScore = userKeyPair.Value.ComputeImpatientScore();
+                                    if (highestImpatientScore < impatientScore)
+                                    {
+                                        highestImpatientScore = impatientScore;
+                                        highestID = userKeyPair.Key;
+                                    }
+                                }
+                            }
+                        }
+                        if (highestID >= 0 && (node.users[highestID].transform.position - transform.position).magnitude < cm.connectionRadius)
+                        {
+                            userServing.Add(highestID, node.users[highestID]);
+                            node.users[highestID].ConnectToRouter(this);
                         }
                     }
                 }
             }
         }
+
         if (battery == null)
         {
             battery = GetComponent<Battery>();
@@ -145,7 +188,6 @@ public class NetworkRouter : MonoBehaviour
             }
             disconnectTimeRemaining -= Time.deltaTime;
         }
-
     }
 
     public void ComputeTransmissionPath_AStar()
@@ -205,7 +247,7 @@ public class NetworkRouter : MonoBehaviour
                 if (unvisitedNodes.ContainsKey(consideringRouter.Key))
                 {
                     // Compute new cost.
-                    float newPathCost = currentNode.pathCost + Vector3.Distance(consideringRouter.Value.transform.position, currentRouter.transform.position) + consideringRouter.Value.userServing;
+                    float newPathCost = currentNode.pathCost + Vector3.Distance(consideringRouter.Value.transform.position, currentRouter.transform.position) + consideringRouter.Value.numberOfUsers;
                     float newHeuristicCost = newPathCost + consideringRouter.Value.numberOfHops;
 
                     // If the new cost is smaller than the cost of the neighboring node.

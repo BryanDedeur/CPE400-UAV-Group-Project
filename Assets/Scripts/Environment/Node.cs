@@ -11,18 +11,19 @@ public class Node : MonoBehaviour
     public int col = 0;
 
     public ConfigurationMap cm;
-    public List<User> users;
+    public Dictionary<int, User> users;
 
     private void Awake()
     {
-        users = new List<User>();
+        users = new Dictionary<int, User>();
     }
 
     void Update()
     {
-        for (int i = 0; i < users.Count; ++i)
+        Dictionary<int, User> tempUserDict = new Dictionary<int, User>(users);
+        foreach (KeyValuePair<int, User> userKeyPair in tempUserDict)
         {
-            float userDistance = (users[i].transform.position - transform.position).magnitude;
+            float userDistance = (userKeyPair.Value.transform.position - transform.position).magnitude;
             if (userDistance > cm.connectionRadius / 2f)
             {
                 Node bestNode = this;
@@ -31,31 +32,26 @@ public class Node : MonoBehaviour
                 {
                     try
                     {
-                        float neighborDistance = (users[i].transform.position - node.transform.position).magnitude;
+                        float neighborDistance = (userKeyPair.Value.transform.position - node.transform.position).magnitude;
                         if (neighborDistance < userDistance)
                         {
                             userDistance = neighborDistance;
                             bestNode = node;
                         }
-                    } catch (Exception e)
-                    {
-                        
                     }
+                    catch (Exception e)
+                    {
 
+                    }
                 }
                 if (bestNode != this)
                 {
-                    bestNode.users.Add(users[i]);
-                    users.Remove(users[i]);
-                } else
-                {
-                    //Debug.DrawLine(transform.position, users[i].transform.position, new Color(.5f, .5f, 0f));
-                }
-            } else
-            {
-                //Debug.DrawLine(transform.position, users[i].transform.position, new Color(.5f, .5f, 0f));
-            }
+                    bestNode.users.Add(userKeyPair.Key, userKeyPair.Value);
+                    userKeyPair.Value.nearestNode = bestNode;
 
+                    users.Remove(userKeyPair.Key);
+                }
+            }
         }
         visual.transform.localScale = new Vector3(1, .01f, 1) * users.Count;
     }
