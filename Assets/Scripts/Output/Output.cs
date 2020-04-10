@@ -22,6 +22,14 @@ public class Output : MonoBehaviour
     public float updateFrequency = 1;
     private float timeRemaining;
 
+    private string generateHeader()
+    {
+        return header = "Time Stamp (Sec)" + "," + "Total Connected Users" + "," + "Total Disconnected Users" + "," + "Average User Disconnection Time" + "," + "Priority 1 User Average Connection Time" + "," + "Priority 2 User Average Connection Time" + "," + "Priority 3 User Average Connection Time" + "," + "Active UAVs" + "," + "Total UAVs Travel Distance";
+    }
+
+    private bool headerWritten = false;
+    private string header;
+
     private System.DateTime startTime;
 
     public static int remainingUAV;
@@ -42,6 +50,11 @@ public class Output : MonoBehaviour
         }
 
         writeToFile = new StreamWriter(filePath, append: true);
+        if (!headerWritten)
+        {
+            writeToFile.WriteLine(generateHeader());
+            headerWritten = true;
+        }
         writeToFile.WriteLine(line);
         writeToFile.Close();
     }
@@ -97,7 +110,7 @@ public class Output : MonoBehaviour
             averageUAVTravelDistance += uav.physics.distanceTraveled / totalActiveUAVs;
         }
 
-        return Mathf.Round((float) timeStamp).ToString() + ", " + totalConnectedUsers + ", " + totalDisconnectedusers + ", " + averageUserDisconnectTime + ", " + priority1UserAverageConnectionTime + ", " + priority2UserAverageConnectionTime + ", " + priority3UserAverageConnectionTime + ", " + totalActiveUAVs + ", " + averageUAVTravelDistance;
+        return timeStamp.ToString() + ", " + totalConnectedUsers + ", " + totalDisconnectedusers + ", " + averageUserDisconnectTime + ", " + priority1UserAverageConnectionTime + ", " + priority2UserAverageConnectionTime + ", " + priority3UserAverageConnectionTime + ", " + totalActiveUAVs + ", " + averageUAVTravelDistance;
     }
 
 
