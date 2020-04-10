@@ -43,7 +43,7 @@ public class NetworkManager : MonoBehaviour
         totalConnectedUsers = 0;
         foreach (KeyValuePair<int, Router> router in routers)
         {
-            totalConnectedUsers += router.Value.connectedDevices.Count;
+            totalConnectedUsers += router.Value.numberOfUsersServing;
         }
     }
 

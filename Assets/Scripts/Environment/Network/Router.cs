@@ -20,6 +20,7 @@ public class Router : MonoBehaviour
 
     public Router parentRouter;
     public int numberOfHops;
+    public int numberOfUsersServing;
     public bool disconnected = true;
 
     public float disconnectTimer = 5;
@@ -74,6 +75,18 @@ public class Router : MonoBehaviour
 
         NetworkManager.inst.GetNearbyRouters(this);
         //displayingConnectedRouters = connectedRouters.Values.ToList();
+
+        numberOfUsersServing = 0;
+        if (name != "Tower" && entity.assignedNode != null)
+        {
+            foreach (UserEntity user in entity.assignedNode.usersInRange)
+            {
+                if ((user.transform.position - transform.position).magnitude > NetworkManager.inst.connectionRadius)
+                {
+                    ++numberOfUsersServing;
+                }
+            }
+        }
 
         if (numberOfHops > 0)
         {

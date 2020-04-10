@@ -6,6 +6,7 @@ public class Device : MonoBehaviour
 {
     public Entity entity;
     public float timeConnected;
+    public float timeDisconnected;
     public Router connectedRouter;
 
     public int priority;
@@ -39,6 +40,9 @@ public class Device : MonoBehaviour
         if (connectedRouter != null)
         {
             timeConnected += Time.deltaTime;
+        } else
+        {
+            timeDisconnected += Time.deltaTime;
         }
     }
 
