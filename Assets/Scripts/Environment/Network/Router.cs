@@ -81,7 +81,7 @@ public class Router : MonoBehaviour
         {
             foreach (UserEntity user in entity.assignedNode.usersInRange)
             {
-                if ((user.transform.position - transform.position).magnitude > NetworkManager.inst.connectionRadius)
+                if ((user.transform.position - transform.position).magnitude < NetworkManager.inst.connectionRadius)
                 {
                     ++numberOfUsersServing;
                 }

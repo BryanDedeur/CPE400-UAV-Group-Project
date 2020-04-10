@@ -34,11 +34,11 @@ public class Output : MonoBehaviour
         remainingUAV -= 1;
     }
 
-    void WriteLineToFile(StreamWriter file, string line)
+    void WriteLineToFile(string line)
     {
         if (!File.Exists(filePath))
         {
-            writeToFile = File.CreateText(filePath);
+            File.CreateText(filePath).Dispose();
         }
 
         writeToFile = new StreamWriter(filePath, append: true);
@@ -106,7 +106,7 @@ public class Output : MonoBehaviour
         if (timeRemaining < 0 && NetworkManager.inst.routers.Count > 0)
         {
             timeRemaining = updateFrequency;
-            WriteLineToFile(writeToFile, CreateStringOfData());
+            WriteLineToFile(CreateStringOfData());
         }
         timeRemaining -= Time.deltaTime;
     }
