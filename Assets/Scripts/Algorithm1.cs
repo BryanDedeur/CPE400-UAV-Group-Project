@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using Coordinate = ConfigurationMap.Coordinate;
 
 public class Algorithm1 : MonoBehaviour
@@ -186,33 +187,33 @@ public class Algorithm1 : MonoBehaviour
     /// </summary>
     public void DispatchUAV()
     {
-        List<UAVEntity> UAVToBeDispatchedList = new List<UAVEntity>(EntityManager.inst.uavs);
+        List<Router> UAVToBeDispatchedList = new List<Router>(NetworkManager.inst.routers.Values.ToList());
         // For each node in the planned configuration.
         foreach (NodeEntity node in plannedNodeEntitys)
         {
             // Find the UAV with the lowest cost to that node.
-            int bestID = -1;
+            Router bestRouter = null;
             float lowestCost = Mathf.Infinity;
-            foreach (UAVEntity uav in UAVToBeDispatchedList)
+            foreach (Router router in UAVToBeDispatchedList)
             {
                 // Dispatch UAV only when the UAV is connected to the tower.
-                if (node != null && uav.router.numberOfHops > 0)
+                if (node != null && router.numberOfHops > 0)
                 {
                     // Cost = distance + number of user uav is serving - battery life.
-                    float cost = Vector3.Distance(node.transform.position, uav.transform.position) + uav.router.numberOfUsersServing - uav.battery.batteryLife;
+                    float cost = Vector3.Distance(node.transform.position, router.transform.position) + router.numberOfUsersServing - router.entity.battery.batteryLife;
                     if (cost < lowestCost)
                     {
                         lowestCost = cost;
-                        bestID = uav.GetID();
+                        bestRouter = router;
                     }
                 }
             }
-            if (bestID > -1)
+            if (bestRouter != null)
             {
                 // Dispatch UAV.
-                ConfigurationMap.inst.SendUAV(bestID, node);
+                ConfigurationMap.inst.SendUAV(bestRouter, node);
                 // Remove the dispatched UAV from the list of available UAVs.
-                UAVToBeDispatchedList.Remove(EntityManager.inst.uavs[bestID]);
+                UAVToBeDispatchedList.Remove(bestRouter);
             }
         }
     }
