@@ -15,9 +15,8 @@ public class NetworkManager : MonoBehaviour
     public float connectionRadius = 1;
     public int totalConnectedUsers = 0;
 
-    public float updateFrequency = 1;
+    public float updateFrequency = 0.5f;
     private float counter = 0.01f;
-
 
     private void Start()
     {
@@ -32,7 +31,8 @@ public class NetworkManager : MonoBehaviour
     // display stats of the environment
 
     public void Update()
-    { 
+    {
+        // Update the transmission path using A* algorith.
         if (counter <= 0)
         {
             counter = updateFrequency;
@@ -40,6 +40,7 @@ public class NetworkManager : MonoBehaviour
         }
         counter -= Time.deltaTime;
 
+        // Keeps track of total number of users currently being served.
         totalConnectedUsers = 0;
         foreach (KeyValuePair<int, Router> router in routers)
         {
@@ -47,24 +48,30 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Find neighboring routers within UAV's router's connection distance.
+    /// </summary>
+    /// <param name="focusRouter"></param>
     public void GetNearbyRouters(Router focusRouter)
     {
-
         if (focusRouter == null)
         {
             return;
         }
 
+        // Clear the old list of neighboring routers.
         focusRouter.connectedRouters.Clear();
-
+        // If UAV has enough battery to function.
         if (focusRouter.name == "Tower" || (focusRouter.entity != null && focusRouter.entity.battery != null && focusRouter.entity.battery.batteryLife > focusRouter.entity.battery.batteryReserveThreshold))
         {
+            // For each router in the total router list.
             foreach (KeyValuePair<int, Router> router in routers)
             {
                 if (router.Value == focusRouter)
                 {
                     continue;
                 }
+                // If the neighboring router is within the UAV's router's connection length, add that router to the list of neighboring router.
                 if ((router.Value.transform.position - focusRouter.transform.position).magnitude <= connectionRadius)
                 {
                     focusRouter.connectedRouters.Add(router.Key, router.Value);
@@ -73,6 +80,9 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Used for A* algorithm.
+    /// </summary>
     public struct NodeEntity_Astar
     {
         public float pathCost;
@@ -81,14 +91,15 @@ public class NetworkManager : MonoBehaviour
         public NodeEntity_Astar(float new_pathCost, float new_heuristicCost)
         {
             pathCost = new_pathCost;
-            heuristicCost = new_heuristicCost;
+            heuristicCost = new_heuristicCost; // Number of hops.
         }
     }
 
+    /// <summary>
+    /// Compute the shortest network routing path between the tower and each router of UAV using A* algorithm.
+    /// </summary>
     public void ComputeTransmissionPath_AStar()
     {
-        /// Compute the shortest connection path between the tower and each router of UAV using A* algorithm.
-
         // Append each router to A* graph node dictionary.
         Dictionary<int, NodeEntity_Astar> unvisitedNodes = new Dictionary<int, NodeEntity_Astar>();
         foreach (KeyValuePair<int, Router> router in NetworkManager.inst.routers)
@@ -104,7 +115,8 @@ public class NetworkManager : MonoBehaviour
                 router.Value.parentRouter = null;
                 router.Value.numberOfHops = 0;
 
-                unvisitedNodes.Add(router.Value.GetID(), new NodeEntity_Astar(Mathf.Infinity, Mathf.Infinity)); // Initialize all to infinite cost.
+                // Initialize all to infinite cost.
+                unvisitedNodes.Add(router.Value.GetID(), new NodeEntity_Astar(Mathf.Infinity, Mathf.Infinity));
             }
         }
 
@@ -133,6 +145,7 @@ public class NetworkManager : MonoBehaviour
             // Remove the visiting node from unvisited node dicionary.
             NodeEntity_Astar currentNodeEntity = unvisitedNodes[currentID];
             unvisitedNodes.Remove(currentID);
+
             Router currentRouter = NetworkManager.inst.routers[currentID];
 
             // For each neighboring nodes of the visiting node.
@@ -141,7 +154,7 @@ public class NetworkManager : MonoBehaviour
                 // If neighboring node is unvisited.
                 if (unvisitedNodes.ContainsKey(consideringRouter.Key))
                 {
-                    // Compute new cost.
+                    // Compute new cost = current path cost + distance to the new node + number of users being served in that node.
                     float newPathCost = currentNodeEntity.pathCost + Vector3.Distance(consideringRouter.Value.transform.position, currentRouter.transform.position) + consideringRouter.Value.connectedDevices.Count;
                     float newHeuristicCost = newPathCost + consideringRouter.Value.numberOfHops;
 

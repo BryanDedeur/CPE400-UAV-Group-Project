@@ -344,7 +344,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectionRadius: 5.1
   totalConnectedUsers: 0
-  updateFrequency: 1
+  updateFrequency: 0.5
   tower: {fileID: 0}
 --- !u!114 &1994610167
 MonoBehaviour:
@@ -376,7 +376,7 @@ MonoBehaviour:
   nodeDistance: 6
   showNodes: 0
   showHeatMap: 0
-  numberOfUsers: 100
+  numberOfUsers: 150
   numberOfUAVs: 70
   columns: 10
   rows: 10
@@ -417,7 +417,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1994610165}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d9413c055d8ae564f9561b1074ef7473, type: 3}
   m_Name: 

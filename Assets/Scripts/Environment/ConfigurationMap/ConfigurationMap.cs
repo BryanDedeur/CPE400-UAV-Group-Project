@@ -26,7 +26,7 @@ public class ConfigurationMap : MonoBehaviour
     public bool showHeatMap = false;
     public NodeEntity[,] configurationMapNodes;
 
-    [Range(1, 100)]
+    [Range(1, 200)]
     public int numberOfUsers;
     [Range(1, 100)]
     public int numberOfUAVs;
