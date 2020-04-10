@@ -9,9 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5837601850942322219}
+  - component: {fileID: 567686240631192279}
   - component: {fileID: 114304906127712340}
   - component: {fileID: 114282548878245792}
-  - component: {fileID: 114424841776337254}
+  - component: {fileID: 7730420269345135146}
   m_Layer: 0
   m_Name: User
   m_TagString: Untagged
@@ -34,6 +35,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &567686240631192279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8225337702173290723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e20107b62aba5349864fd3621001ec4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  physics: {fileID: 0}
+  ai: {fileID: 0}
+  router: {fileID: 0}
+  device: {fileID: 0}
+  battery: {fileID: 0}
+  debug: 0
+  nearestNode: {fileID: 0}
 --- !u!114 &114304906127712340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46,6 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ced4fd90c8c2474b88d82ae6c1c027d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entity: {fileID: 0}
 --- !u!114 &114282548878245792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,7 +90,7 @@ MonoBehaviour:
   climbRate: 0
   maxSpeed: 0.5
   distanceTraveled: 0
---- !u!114 &114424841776337254
+--- !u!114 &7730420269345135146
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -78,11 +99,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8225337702173290723}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b1dc8afe014a8749979a8206c76a802, type: 3}
+  m_Script: {fileID: 11500000, guid: 191b0c3c1c044464f80247d24d20729e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entity: {fileID: 0}
+  timeConnected: 0
   connectedRouter: {fileID: 0}
-  nearestNode: {fileID: 0}
+  priority: 0
+  ID: 0
 --- !u!1001 &9050936181899774031
 PrefabInstance:
   m_ObjectHideFlags: 0

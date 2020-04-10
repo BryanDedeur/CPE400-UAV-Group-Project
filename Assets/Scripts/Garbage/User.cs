@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class User : MonoBehaviour
 {
     public NetworkRouter connectedRouter;
@@ -66,3 +67,4 @@ public class User : MonoBehaviour
 
     }
 }
+*/

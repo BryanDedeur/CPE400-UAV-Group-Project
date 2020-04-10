@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+/*
 public class Node : MonoBehaviour
 {
     public GameObject visual = null;
@@ -10,7 +11,6 @@ public class Node : MonoBehaviour
     public int row = 0;
     public int col = 0;
 
-    public ConfigurationMap cm;
     public Dictionary<int, User> users;
 
     private void Awake()
@@ -18,16 +18,17 @@ public class Node : MonoBehaviour
         users = new Dictionary<int, User>();
     }
 
+    /*
     void Update()
     {
         Dictionary<int, User> tempUserDict = new Dictionary<int, User>(users);
         foreach (KeyValuePair<int, User> userKeyPair in tempUserDict)
         {
             float userDistance = (userKeyPair.Value.transform.position - transform.position).magnitude;
-            if (userDistance > cm.connectionRadius / 2f)
+            if (userDistance > ConfigurationMap.inst.connectionRadius / 2f)
             {
                 Node bestNode = this;
-                List<Node> neighbors = cm.GetNeighbors(row, col);
+                List<Node> neighbors = ConfigurationMap.inst.GetNeighbors(row, col);
                 foreach (Node node in neighbors)
                 {
                     try
@@ -55,4 +56,6 @@ public class Node : MonoBehaviour
         }
         visual.transform.localScale = new Vector3(1, .01f, 1) * users.Count;
     }
+    
 }
+*/

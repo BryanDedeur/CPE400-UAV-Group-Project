@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BryansPhysics : MonoBehaviour
+public class OrientedPhysics : MonoBehaviour
 {
     public float tolerance = .2f;
     public float heading = 0; // could be direction vector

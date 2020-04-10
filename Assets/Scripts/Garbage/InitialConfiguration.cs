@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class InitialConfiguration : MonoBehaviour
 {
     public bool renderBehindTheScene;
@@ -14,11 +15,11 @@ public class InitialConfiguration : MonoBehaviour
     [Range(0, 1)]
     public float towerPosZ;
 
-    private ConfigurationMap configurationMap;
     bool runOnce = false;
 
     private bool previousRenderToggle;
 
+    /*
     // ---------- EDIT THIS FOR INITIAL ENVIRONMENT SETUP ----------- //
     private void Setup()
     {
@@ -75,4 +76,6 @@ public class InitialConfiguration : MonoBehaviour
             ToggleRender(renderBehindTheScene);
         }
     }
+    
 }
+*/

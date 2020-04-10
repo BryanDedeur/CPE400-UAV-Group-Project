@@ -9,12 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7512501795938185980}
+  - component: {fileID: 1669686356945875059}
+  - component: {fileID: 7219126731027530584}
+  - component: {fileID: 1661743892036656014}
+  - component: {fileID: 9172517703382282332}
+  - component: {fileID: 114963213513745478}
   - component: {fileID: 7782391213792334287}
   - component: {fileID: 2248878521069058257}
-  - component: {fileID: 1661743892036656014}
-  - component: {fileID: 7219126731027530584}
-  - component: {fileID: 114367881271669668}
-  - component: {fileID: 114963213513745478}
   m_Layer: 0
   m_Name: UAV
   m_TagString: Untagged
@@ -36,6 +37,103 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1669686356945875059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5739633684911547640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2aa9f623bbeac341878042304110d08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  physics: {fileID: 0}
+  ai: {fileID: 0}
+  router: {fileID: 0}
+  device: {fileID: 0}
+  battery: {fileID: 0}
+  assignedNode: {fileID: 0}
+--- !u!114 &7219126731027530584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5739633684911547640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fb8674228bff18489246a78399c3416, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tolerance: 0.2
+  heading: 0
+  desiredHeading: 0
+  turnRate: 180
+  acceleration: 2
+  speed: 0
+  desiredSpeed: 0
+  desiredAltitude: 0
+  climbRate: 3
+  maxSpeed: 10
+  distanceTraveled: 0
+--- !u!114 &1661743892036656014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5739633684911547640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ced4fd90c8c2474b88d82ae6c1c027d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entity: {fileID: 0}
+  rejectInstructions: 0
+  debug: 0
+--- !u!114 &9172517703382282332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5739633684911547640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceed767ebea8aef4692bfa6f8ab7d59d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entity: {fileID: 0}
+  routerToDeviceColor: {r: 1, g: 0, b: 0, a: 1}
+  routerToRouterColor: {r: 0, g: 1, b: 0.9553578, a: 1}
+  connectionRadius: 5
+  maximumDeviceCapacity: 2
+  timeConnected: 0
+  parentRouter: {fileID: 0}
+  numberOfHops: 0
+  disconnected: 1
+  disconnectTimer: 6
+  AStarConnectionLength: 0
+--- !u!114 &114963213513745478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5739633684911547640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 441e9fdc25a02cc4cb813ec241f02212, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  batteryLife: 1
+  batteryReserveThreshold: 0.2
+  batteryDrainRateRelativeToSpeed: 0.001
+  batteryDrainRateServingUsers: 0.005
+  batteryDrainRateConstant: 0.001
+  running: 1
 --- !u!33 &7782391213792334287
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -81,79 +179,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &1661743892036656014
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5739633684911547640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ced4fd90c8c2474b88d82ae6c1c027d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &7219126731027530584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5739633684911547640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fb8674228bff18489246a78399c3416, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tolerance: 0.2
-  heading: 0
-  desiredHeading: 0
-  turnRate: 75
-  acceleration: 2
-  speed: 0
-  desiredSpeed: 0
-  desiredAltitude: 6
-  climbRate: 3
-  maxSpeed: 10
-  distanceTraveled: 0
---- !u!114 &114367881271669668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5739633684911547640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceed767ebea8aef4692bfa6f8ab7d59d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  routerToRouterColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-  routerToUserColor: {r: 1, g: 0, b: 0, a: 1}
-  battery: {fileID: 0}
-  cm: {fileID: 0}
-  displayingConnectedRouters: []
-  connectionLength: 0
-  numberOfHops: 0
-  parentRouter: {fileID: 0}
-  numberOfUsers: 0
-  disconnectTimeDuration: 5
-  disconnectTimeRemaining: 5
---- !u!114 &114963213513745478
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5739633684911547640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 441e9fdc25a02cc4cb813ec241f02212, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  batteryLife: 1
-  batteryDrainRateRelativeToSpeed: 0.001
-  batteryDrainRateServingUsers: 0.005
-  batteryDrainRateConstant: 0.001
-  running: 0
-  requestStop: 0
