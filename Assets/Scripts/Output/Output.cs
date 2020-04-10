@@ -22,25 +22,30 @@ public class Output : MonoBehaviour
     public float updateFrequency = 1;
     private float timeRemaining;
 
+
+
+    private bool headerWritten = false;
+    private string header;
+
+    private bool parameterHeaderWritten = false;
+    private string parameterHeader;
+
     private string generateHeader()
     {
         return header = "Time Stamp (Sec)" + "," + "Total Connected Users" + "," + "Total Disconnected Users" + "," + "Average User Disconnection Time" + "," + "Priority 1 User Average Connection Time" + "," + "Priority 2 User Average Connection Time" + "," + "Priority 3 User Average Connection Time" + "," + "Active UAVs" + "," + "Total UAVs Travel Distance";
     }
 
-    private bool headerWritten = false;
-    private string header;
+    private string generateParameterHeader()
+    {
+        return parameterHeader = "HI";
+    }
+
 
     private System.DateTime startTime;
 
-    public static int remainingUAV;
     private string filePath = "Assets/Scripts/Output/";
-    StreamWriter writeToFile;
-    private ConfigurationMap map;
-
-    public void decerementRemainingUAV()
-    {
-        remainingUAV -= 1;
-    }
+    private string parameterFilePath = "Assets/Scripts/Output/Parameters.csv";
+    StreamWriter writeToFile, parameterWriteToFile;
 
     void WriteLineToFile(string line)
     {
@@ -59,10 +64,29 @@ public class Output : MonoBehaviour
         writeToFile.Close();
     }
 
+    void ParameterWriteLineToFile()
+    {
+        if (!File.Exists(parameterFilePath))
+        {
+            File.CreateText(parameterFilePath).Dispose();
+        }
+
+        writeToFile = new StreamWriter(parameterFilePath);
+        if (!parameterHeaderWritten)
+        {
+            writeToFile.WriteLine(generateParameterHeader());
+            parameterHeaderWritten = true;
+        }
+        writeToFile.WriteLine(generateParameterHeader());
+        writeToFile.WriteLine(CreateParameterStringOfData());
+        writeToFile.Close();
+    }
+
     private void Start()
     {
         startTime = System.DateTime.Now;
         filePath += MyExtensions.AppendTimeStamp("Date.csv");
+
     }
 
     private string CreateStringOfData()
@@ -71,7 +95,7 @@ public class Output : MonoBehaviour
         int totalConnectedUsers = NetworkManager.inst.totalConnectedUsers;
         int totalDisconnectedusers = EntityManager.inst.users.Count - totalConnectedUsers;
         int totalUsers = EntityManager.inst.users.Count;
-        int totalActiveUAVs = EntityManager.inst.uavs.Count;
+        int totalActiveUAVs = NetworkManager.inst.routers.Count - 1;
         float averageUserDisconnectTime = 0;
         float priority1UserAverageConnectionTime = 0;
         int priority1UserCount = 0;
@@ -113,8 +137,12 @@ public class Output : MonoBehaviour
         return timeStamp.ToString() + ", " + totalConnectedUsers + ", " + totalDisconnectedusers + ", " + averageUserDisconnectTime + ", " + priority1UserAverageConnectionTime + ", " + priority2UserAverageConnectionTime + ", " + priority3UserAverageConnectionTime + ", " + totalActiveUAVs + ", " + averageUAVTravelDistance;
     }
 
+    private string CreateParameterStringOfData()
+    {
+        return "HI";
+    }
 
-    void Update()
+        void Update()
     {
         if (timeRemaining < 0 && NetworkManager.inst.routers.Count > 0)
         {
