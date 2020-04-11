@@ -11,6 +11,10 @@ public abstract class Entity : MonoBehaviour
     public Battery battery;
     protected int ID;
 
+    /// <summary>
+    /// Gets the ID of the entity.
+    /// </summary>
+    /// <returns> The newly created entity. </returns>
     public int GetID()
     {
         return ID;

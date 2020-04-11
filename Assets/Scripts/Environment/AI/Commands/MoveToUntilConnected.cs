@@ -12,11 +12,17 @@ public class MoveToUntilConnected : MoveTo
         targetSpeed = entity.physics.maxSpeed;
     }
 
+    /// <summary>
+    /// Initialized information for the AI.
+    /// </summary>
     public override void Init()
     {
 
     }
 
+    /// <summary>
+    /// Called once per frame to update ai information.
+    /// </summary>
     public override void Tick()
     {
         timeToStop = (entity.physics.speed) / (entity.physics.acceleration);
@@ -59,12 +65,19 @@ public class MoveToUntilConnected : MoveTo
 
     }
 
+    /// <summary>
+    /// A check called every frame to signify the command is finished.
+    /// </summary>
+    /// <returns> If the command is finished. </returns>
     public override bool IsDone()
     {
         differenceVector = (entity.transform.position - targetPosition);
         return ((differenceVector.sqrMagnitude < doneDistanceSquared) || entity.router.numberOfHops > 0);
     }
 
+    /// <summary>
+    /// Wraps up actions before destruction.
+    /// </summary>
     public override void Stop()
     {
         entity.physics.desiredSpeed = 0;

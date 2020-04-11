@@ -12,11 +12,17 @@ public class RandomStopStartDirectionalMovement : Command
     private float xMin;
     private bool bounded = false;
 
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
     public RandomStopStartDirectionalMovement(Entity ent) : base(ent)
     {
         entity = ent;
     }
 
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
     public RandomStopStartDirectionalMovement(Entity ent, float minX, float maxX, float minZ, float maxZ) : base(ent)
     {
         entity = ent;
@@ -27,10 +33,16 @@ public class RandomStopStartDirectionalMovement : Command
         bounded = true;
     }
 
+    /// <summary>
+    /// Initialized information for the AI.
+    /// </summary>
     public override void Init()
     {
     }
 
+    /// <summary>
+    /// Called once per frame to update ai information.
+    /// </summary>
     public override void Tick()
     {
         if (timeUntilNextSpeedUpdate < 0)
@@ -67,11 +79,18 @@ public class RandomStopStartDirectionalMovement : Command
         }
     }
 
+    /// <summary>
+    /// Called once per frame to update ai information.
+    /// </summary>
+    /// <returns> If the command is finished. </returns>
     public override bool IsDone()
     {
         return false;
     }
 
+    /// <summary>
+    /// Wraps up actions before destruction.
+    /// </summary>
     public override void Stop()
     {
 

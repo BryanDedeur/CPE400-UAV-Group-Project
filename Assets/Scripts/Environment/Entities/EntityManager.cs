@@ -44,6 +44,11 @@ public class EntityManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Creates a entity of type node at a given position.
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns> The newly created entity. </returns>
     public NodeEntity CreateNode(Vector3 atPos)
     {
         if (nodePrefab == null)
@@ -60,6 +65,11 @@ public class EntityManager : MonoBehaviour
         return node;
     }
 
+    /// <summary>
+    /// Creates a entity of type uav at a given position
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns> The newly created entity. </returns>
     public UAVEntity CreateUAV(Vector3 atPos)
     {
         if (uavPrefab == null)
@@ -80,6 +90,11 @@ public class EntityManager : MonoBehaviour
         return uav;
     }
 
+    /// <summary>
+    /// Creates a entity of type user at a given position
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns> The newly created entity. </returns>
     public UserEntity CreateUser(Vector3 atPos, float rotation)
     {
         if (userPrefab == null)

@@ -15,7 +15,6 @@ public class UserEntity : Entity
         count = count + 1;
     }
 
-
     private void Update()
     {
         if (nearestNode != null)

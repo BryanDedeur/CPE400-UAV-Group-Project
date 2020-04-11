@@ -14,4 +14,3 @@ public class UAVEntity : Entity
         count = count + 1;
     }
 }
-

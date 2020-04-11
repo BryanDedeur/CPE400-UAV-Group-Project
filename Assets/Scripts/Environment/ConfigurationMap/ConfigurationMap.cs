@@ -95,13 +95,16 @@ public class ConfigurationMap : MonoBehaviour
 
     public void Update()
     {
-        foreach(NodeEntity node in EntityManager.inst.nodes)
+        foreach (NodeEntity node in EntityManager.inst.nodes)
         {
             node.ToggleHeatVisual(showHeatMap);
             node.ToggleNodeVisual(showNodes);
         }
     }
 
+    /// <summary>
+    /// Creates the nodes within the configuration map.
+    /// </summary>
     private void CreateNodes()
     {
         configurationMapNodes = new NodeEntity[rows, columns];
@@ -134,6 +137,9 @@ public class ConfigurationMap : MonoBehaviour
         EstablishNodeInformation();
     }
 
+    /// <summary>
+    /// Establishes the neighbor information for each node and makes is accessible from within the node entity.
+    /// </summary>
     private void EstablishNodeInformation()
     {
         for (int c = 0; c < columns; ++c)
@@ -148,11 +154,14 @@ public class ConfigurationMap : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Creates the users and randomly places them within the area of the map and gives the user AI command to start movement.
+    /// </summary>
     private void CreateUsers()
     {
         for (int i = 0; i < numberOfUsers; ++i)
         {
-            UserEntity user = EntityManager.inst.CreateUser(groundOffset + new Vector3(UnityEngine.Random.Range(0, 100) / 100f * verticalMapSize, 0, UnityEngine.Random.Range(0, 100) / 100f * horizontalMapSize), UnityEngine.Random.Range(0,360));
+            UserEntity user = EntityManager.inst.CreateUser(groundOffset + new Vector3(UnityEngine.Random.Range(0, 100) / 100f * verticalMapSize, 0, UnityEngine.Random.Range(0, 100) / 100f * horizontalMapSize), UnityEngine.Random.Range(0, 360));
             RandomStopStartDirectionalMovement command = new RandomStopStartDirectionalMovement(user, groundOffset.x, verticalMapSize / 2, groundOffset.z, horizontalMapSize / 2);
             user.ai.SetCommand(command);
             user.nearestNode = GetNearestNode(user.transform.position);
@@ -160,6 +169,9 @@ public class ConfigurationMap : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Creats the UAV's and places them at the location of the tower.
+    /// </summary>
     private void CreateUAVs()
     {
         for (int i = 0; i < numberOfUAVs; ++i)
@@ -168,8 +180,142 @@ public class ConfigurationMap : MonoBehaviour
         }
     }
 
-    // --------------------------------------------- HELPERS ---------------------------------------------------------------- //
+    // ---------------------------------------------------- UAV MOVEMENT ---------------------------------------------------------------- //
 
+    /// <summary>
+    /// Sends the UAV to a node on the configuration map using AI.
+    /// </summary>
+    /// <param name="uav"></param>
+    /// <param name="toNode"></param>
+    /// <returns> Whether or not the node was sucessfully placed on the map. </returns>
+    public bool SendUAV(UAVEntity uav, NodeEntity toNode)
+    {
+        if (uav == null)
+        {
+            return false;
+        }
+
+        if (toNode == null)
+        {
+            return false;
+        }
+
+        uav.assignedNode = toNode;
+        toNode.assignedUAV = uav;
+        MoveTo moveToCommand = new MoveTo(uav, toNode.transform.position);
+        uav.ai.SetCommand(moveToCommand);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Sends the UAV that exists under a node to a node on the configuration map using AI.
+    /// </summary>
+    /// <param name="fromNode"></param>
+    /// <param name="toNode"></param>
+    /// <returns> Whether or not the node was sucessfully placed on the map. </returns>
+    public bool SendUAV(NodeEntity fromNode, NodeEntity toNode)
+    {
+        return SendUAV(fromNode.assignedUAV, toNode);
+    }
+
+    /// <summary>
+    /// Sends the UAV of ID to a node on the configuration map using AI.
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <param name="toNode"></param>
+    /// <returns> Whether or not the node was sucessfully placed on the map. </returns>
+    public bool SendUAV(int ID, NodeEntity toNode)
+    {
+        return SendUAV(EntityManager.inst.uavs[ID], toNode);
+    }
+
+    /// <summary>
+    /// Sends the UAV belonging to the router to a node on the configuration map using AI.
+    /// </summary>
+    /// <param name="router"></param>
+    /// <param name="toNode"></param>
+    /// <returns> Whether or not the node was sucessfully placed on the map. </returns>
+    public bool SendUAV(Router router, NodeEntity toNode)
+    {
+        return SendUAV(router.entity, toNode);
+    }
+
+    /// <summary>
+    /// Stops the UAV of ID.
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <returns> Whether or not the uav was able to be stopped. </returns>
+    public bool StopUAV(int ID)
+    {
+        UAVEntity uav = EntityManager.inst.uavs[ID];
+        uav.ai.StopAndRemoveAllCommands();
+        uav.physics.desiredSpeed = 0;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Sends the UAV to the tower until it's connected to the network.
+    /// </summary>
+    /// <param name="uav"></param>
+    /// <returns> Whether or not the uav was able to be sent to the tower. </returns>
+    public bool SendUAVToTower(UAVEntity uav)
+    {
+        if (uav == null)
+        {
+            return false;
+        }
+
+        uav.assignedNode = null;
+        MoveToUntilConnected moveToCommand = new MoveToUntilConnected(uav, towerPrefab.transform.position);
+        uav.ai.SetCommand(moveToCommand);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Decomissions the uav from the network.
+    /// </summary>
+    /// <param name="uav"></param>
+    /// <returns> Whether or not the uav was able to be decomissioned. </returns>
+    public bool DecomissionUAV(Entity uav)
+    {
+        if (uav == null)
+        {
+            return false;
+        }
+
+        UAVEntity newUAV = uav as UAVEntity;
+        newUAV.assignedNode = null;
+
+        NetworkManager.inst.routers.Remove(newUAV.router.GetID());
+
+        MoveTo moveToCommand = new MoveTo(uav, new Vector3(towerPrefab.transform.position.x, 0, towerPrefab.transform.position.z));
+        uav.ai.SetCommand(moveToCommand);
+        uav.ai.rejectInstructions = true;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Decomissions the uav from the network.
+    /// </summary>
+    /// <param name="fromNode"></param>
+    /// <returns> Whether or not the uav was able to be decomissioned. </returns>
+    public bool DecomissionUAV(NodeEntity fromNode)
+    {
+        return DecomissionUAV(fromNode.assignedUAV);
+    }
+
+    // ---------------------------------------------------- HELPERS ---------------------------------------------------------------- //
+
+    /// <summary>
+    /// Gets the neighbor nodes given a row column parameter.
+    /// </summary>
+    /// <param name="row"></param>
+    /// <param name="column"></param>
+    /// <returns> A list of neighbors nodes relative to the row and column. </returns>
     public List<NodeEntity> GetNeighbors(int row, int column)
     {
         List<NodeEntity> neighborList = new List<NodeEntity>();
@@ -209,6 +355,14 @@ public class ConfigurationMap : MonoBehaviour
         return neighborList;
     }
 
+    /// <summary>
+    /// Gets the neighbor nodes given a row column parameter and number of rows and columns.
+    /// </summary>
+    /// <param name="row"></param>
+    /// <param name="column"></param>
+    /// <param name="n_rows"></param>
+    /// <param name="n_columns"></param>
+    /// <returns> A list of neighbors coordinates. </returns>
     static public List<Coordinate> GetNeighboringCoordinates(int row, int column, int n_rows, int n_columns)
     {
         List<Coordinate> neighborList = new List<Coordinate>();
@@ -249,8 +403,13 @@ public class ConfigurationMap : MonoBehaviour
         return neighborList;
     }
 
-
-
+    /// <summary>
+    /// Gets the neighbor nodes given a row column parameter and number of rows and columns.
+    /// </summary>
+    /// <param name="coordinate"></param>
+    /// <param name="n_rows"></param>
+    /// <param name="n_columns"></param>
+    /// <returns> A list of neighbors coordinates. </returns>
     static public List<Coordinate> GetNeighboringCoordinates(Coordinate coordinate, int n_rows, int n_columns)
     {
         int row = coordinate.r;
@@ -259,7 +418,23 @@ public class ConfigurationMap : MonoBehaviour
         return GetNeighboringCoordinates(row, column, n_rows, n_columns); ;
     }
 
+    /// <summary>
+    /// Gets the neighbors as a list of entitys.
+    /// </summary>
+    /// <param name="node"></param>
+    /// <returns> a List of neighbor node entities. </returns>
+    public List<NodeEntity> GetNeighbors(NodeEntity node)
+    {
+        return GetNeighbors(node.row, node.col);
+    }
 
+    /// <summary>
+    /// Gets the empty connected coordinates.
+    /// </summary>
+    /// <param name="configurationCoordiates"></param>
+    /// <param name="rows"></param>
+    /// <param name="cols"></param>
+    /// <returns> A list of empty neighbors coordinates. </returns>
     public List<Coordinate> GetEmptyConnectedCoordinates(List<Coordinate> configurationCoordiates, int rows, int columns)
     {
         List<Coordinate> coordinateList = new List<Coordinate>();
@@ -281,11 +456,13 @@ public class ConfigurationMap : MonoBehaviour
         return coordinateList;
     }
 
-    public List<NodeEntity> GetNeighbors(NodeEntity node)
-    {
-        return GetNeighbors(node.row, node.col);
-    }
 
+
+    /// <summary>
+    /// Gets a compressed version of the configuration map.
+    /// </summary>
+    /// <param name="withConnection"></param>
+    /// <returns> A two dimensional occupancy map. </returns>
     public bool[,] GetCompressedConfigurationMap(bool withConnection = true)
     {
         bool[,] compressedConfigurationMap = new bool[rows, columns];
@@ -322,6 +499,11 @@ public class ConfigurationMap : MonoBehaviour
         return compressedConfigurationMap;
     }
 
+    /// <summary>
+    /// Gets a list of cordinates based on the configuration.
+    /// </summary>
+    /// <param name="withConnection"></param>
+    /// <returns> List of coordinates in the configuration. </returns>
     public List<Coordinate> GetConfigurationCoordinates(bool withConnection = true)
     {
         List<Coordinate> configurationCoordinates = new List<Coordinate>();
@@ -350,6 +532,10 @@ public class ConfigurationMap : MonoBehaviour
         return configurationCoordinates;
     }
 
+    /// <summary>
+    /// Gets user count map.
+    /// </summary>
+    /// <returns> A two dimensional occupancy map with intiger values representing users. </returns>
     public int[,] GetUserCountMap()
     {
         int[,] userCountMap = new int[rows, columns];
@@ -372,16 +558,32 @@ public class ConfigurationMap : MonoBehaviour
         return userCountMap;
     }
 
+    /// <summary>
+    /// Converts a coordinate to a node entity.
+    /// </summary>
+    /// <param name="coordinate"></param>
+    /// <returns> A node entity. </returns>
     public NodeEntity GetNode(Coordinate coordinate)
     {
         return configurationMapNodes[coordinate.r, coordinate.c];
     }
 
+    /// <summary>
+    /// Gets the node given a row and column
+    /// </summary>
+    /// <param name="row"></param>
+    /// <param name="column"></param>
+    /// <returns> Returns the node entity </returns>
     public NodeEntity GetNode(int row, int column)
     {
         return configurationMapNodes[row, column];
     }
 
+    /// <summary>
+    /// Converts a list of coordinates to a list of nodes.
+    /// </summary>
+    /// <param name="coordinates"></param>
+    /// <returns> A list of nodes. </returns>
     public List<NodeEntity> CoordinatesToNodes(List<Coordinate> coordinates)
     {
         List<NodeEntity> nodeList = new List<NodeEntity>();
@@ -394,12 +596,17 @@ public class ConfigurationMap : MonoBehaviour
         return nodeList;
     }
 
+    /// <summary>
+    /// Gets the nearest node to a 3d position.
+    /// </summary>
+    /// <param name="userCountMap"></param>
+    /// <returns> The nearest node. </returns>
     public NodeEntity GetNearestNode(Vector3 position)
     {
         NodeEntity nearestNode = null;
         float nearestDistance = Mathf.Infinity;
         float testDistance;
-        foreach(NodeEntity node in EntityManager.inst.nodes)
+        foreach (NodeEntity node in EntityManager.inst.nodes)
         {
             testDistance = (node.transform.position - position).sqrMagnitude;
             if (testDistance < nearestDistance)
@@ -412,11 +619,19 @@ public class ConfigurationMap : MonoBehaviour
         return nearestNode;
     }
 
+    /// <summary>
+    /// Gets the nearest node from the tower.
+    /// </summary>
+    /// <returns> The closest node to the tower </returns>
     public NodeEntity GetNearestNodeFromTower()
-    {      
+    {
         return GetNearestNode(towerPrefab.transform.position);
     }
 
+    /// <summary>
+    /// Gets the nearest node and distance from the tower.
+    /// </summary>
+    /// <returns> A tuple containing the node and the distance of that node. </returns>
     public (NodeEntity, float) GetNearestNodeAndDistanceFromTower()
     {
         NodeEntity nearestNode = null;
@@ -435,6 +650,10 @@ public class ConfigurationMap : MonoBehaviour
         return (nearestNode, nearestDistance);
     }
 
+    /// <summary>
+    /// Gets all the nodes near the tower within the connection distace.
+    /// </summary>
+    /// <returns> All the nodes near the tower. </returns>
     public List<NodeEntity> GetManyNeasestNodesFromTower()
     {
         List<NodeEntity> manyNearestNodes = new List<NodeEntity>();
@@ -452,91 +671,4 @@ public class ConfigurationMap : MonoBehaviour
 
         return manyNearestNodes;
     }
-
-    // ------------------------ UAV Movement ---------------------------------------- //
-
-    public bool SendUAV(UAVEntity uav, NodeEntity toNode)
-    {
-        if (uav == null)
-        {
-            return false;
-        }
-
-        if (toNode == null)
-        {
-            return false;
-        }
-
-        uav.assignedNode = toNode;
-        toNode.assignedUAV = uav;
-        MoveTo moveToCommand = new MoveTo(uav, toNode.transform.position);
-        uav.ai.SetCommand(moveToCommand);
-
-        return true;
-    }
-
-    public bool SendUAV(NodeEntity fromNode, NodeEntity toNode)
-    {
-        return SendUAV(fromNode.assignedUAV, toNode);
-    }
-
-    public bool SendUAV(int ID, NodeEntity toNode)
-    {
-        return SendUAV(EntityManager.inst.uavs[ID], toNode);
-    }
-
-    public bool SendUAV(Router router, NodeEntity toNode)
-    {
-        return SendUAV(router.entity, toNode);
-    }
-
-    public bool StopUAV(int ID)
-    {
-        UAVEntity uav = EntityManager.inst.uavs[ID];
-        uav.ai.StopAndRemoveAllCommands();
-        uav.physics.desiredSpeed = 0;
-
-        return true;
-    }
-
-    // ----------------------- NEW ------------------------------ //
-
-    public bool SendUAVToTower(UAVEntity uav)
-    {
-        if (uav == null)
-        {
-            return false;
-        }
-
-        uav.assignedNode = null;
-        MoveToUntilConnected moveToCommand = new MoveToUntilConnected(uav, towerPrefab.transform.position);
-        uav.ai.SetCommand(moveToCommand);
-
-        return true;
-    }
-
-    public bool DecomissionUAV(Entity uav)
-    {
-        if (uav == null)
-        {
-            return false;
-        }
-
-        UAVEntity newUAV = uav as UAVEntity;
-        newUAV.assignedNode = null;
-
-        NetworkManager.inst.routers.Remove(newUAV.router.GetID());   
-
-        MoveTo moveToCommand = new MoveTo(uav, new Vector3(towerPrefab.transform.position.x, 0, towerPrefab.transform.position.z));
-        uav.ai.SetCommand(moveToCommand);
-        uav.ai.rejectInstructions = true;
-
-        return true;
-    }
-
-    public bool DecomissionUAV(NodeEntity fromNode)
-    {
-        return DecomissionUAV(fromNode.assignedUAV);
-    }
-
 }

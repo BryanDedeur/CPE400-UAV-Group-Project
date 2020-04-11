@@ -17,7 +17,7 @@ public class UnitAI : MonoBehaviour
 
     public List<Command> commands;
 
-    void Update()
+    void FixedUpdate()
     {
         if (commands.Count > 0)
         {
@@ -38,6 +38,10 @@ public class UnitAI : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Stop and remove a specific command
+    /// </summary>
+    /// <param name="index"></param>
     void StopAndRemoveCommand(int index)
     {
         if (!rejectInstructions)
@@ -47,6 +51,9 @@ public class UnitAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Stops all the commands and removes them from the queue.
+    /// </summary>
     public void StopAndRemoveAllCommands()
     {
         if (!rejectInstructions)
@@ -58,6 +65,9 @@ public class UnitAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Adds a command to the queue.
+    /// </summary>
     public void AddCommand(Command c)
     {
         if (!rejectInstructions)
@@ -67,6 +77,9 @@ public class UnitAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clears the queue and add a command to the queue.
+    /// </summary>
     public void SetCommand(Command c)
     {
         if (!rejectInstructions)
@@ -76,19 +89,4 @@ public class UnitAI : MonoBehaviour
             AddCommand(c);
         }
     }
-
-    public void DecorateAll()
-    {
-        Command prior = null;
-        foreach (Command c in commands)
-        {
-            Decorate(prior, c);
-            prior = c;
-        }
-    }
-    public void Decorate(Command prior, Command current)
-    {
-
-    }
-
 }

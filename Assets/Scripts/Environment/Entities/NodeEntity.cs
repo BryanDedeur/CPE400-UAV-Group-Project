@@ -38,6 +38,9 @@ public class NodeEntity : Entity
         }
     }
 
+    /// <summary>
+    /// Evaluate the user information in range of neighbor nodes.
+    /// </summary>
     private void EvaluateNearbyUsers()
     {
         List<UserEntity> tempUsers = new List<UserEntity>(usersInRange);
@@ -74,11 +77,17 @@ public class NodeEntity : Entity
         }
     }
 
+    /// <summary>
+    /// Toggles the visuals of the nodes.
+    /// </summary>
     public void ToggleNodeVisual(bool isRendering)
     {
         nodeVisual.SetActive(isRendering);
     }
 
+    /// <summary>
+    /// Toggles the number of user visuals of the node.
+    /// </summary>
     public void ToggleHeatVisual(bool isRendering)
     {
         heatVisual.SetActive(isRendering);
