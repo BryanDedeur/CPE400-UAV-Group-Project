@@ -32,7 +32,7 @@ public class Output : MonoBehaviour
 
     private string generateHeader()
     {
-        return header = "Time Stamp (Sec),Total Connected Users,Total Disconnected Users,Average User Disconnection Time,Priority 1 User Average Connection Time,Priority 2 User Average Connection Time,Priority 3 User Average Connection Time,Active UAVs,Total UAVs,Travel Distance";
+        return header = "Time Stamp (Sec),Total Connected Users,Total Disconnected Users,Average User Disconnection Time,Priority 1 User Average Connection Time,Priority 2 User Average Connection Time,Priority 3 User Average Connection Time,Active UAVs,Total UAVs Travel Distance";
     }
 
     private string generateParameterHeader()
@@ -139,7 +139,7 @@ public class Output : MonoBehaviour
     private void Start()
     {
         startTime = System.DateTime.Now;
-        filePath += MyExtensions.AppendTimeStamp("Date.csv");
+        filePath += MyExtensions.AppendTimeStamp("Data.csv");
     }
 
     void Update()

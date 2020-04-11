@@ -109,12 +109,11 @@ MonoBehaviour:
   routerToDeviceColor: {r: 1, g: 0, b: 0, a: 1}
   routerToRouterColor: {r: 0, g: 1, b: 0.9553578, a: 1}
   connectionRadius: 5
-  maximumDeviceCapacity: 5
+  maximumDeviceCapacity: 2
   timeConnected: 0
   parentRouter: {fileID: 0}
   numberOfHops: 0
   numberOfUsersServing: 0
-  disconnected: 1
   disconnectTimer: 6
   AStarConnectionLength: 0
 --- !u!114 &114963213513745478
