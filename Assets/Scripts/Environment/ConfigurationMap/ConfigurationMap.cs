@@ -485,6 +485,11 @@ public class ConfigurationMap : MonoBehaviour
         return SendUAV(EntityManager.inst.uavs[ID], toNode);
     }
 
+    public bool SendUAV(Router router, NodeEntity toNode)
+    {
+        return SendUAV(router.entity, toNode);
+    }
+
     public bool StopUAV(int ID)
     {
         UAVEntity uav = EntityManager.inst.uavs[ID];

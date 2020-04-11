@@ -88,6 +88,8 @@ public class Output : MonoBehaviour
         int totalDisconnectedusers = EntityManager.inst.users.Count - totalConnectedUsers;
         int totalUsers = EntityManager.inst.users.Count;
         int totalActiveUAVs = NetworkManager.inst.routers.Count - 1;
+
+        int totalUAVs = EntityManager.inst.uavs.Count;
         float averageUserDisconnectTime = 0;
         float priority1UserAverageConnectionTime = 0;
         int priority1UserCount = 0;
@@ -123,7 +125,7 @@ public class Output : MonoBehaviour
 
         foreach (UAVEntity uav in EntityManager.inst.uavs)
         {
-            averageUAVTravelDistance += uav.physics.distanceTraveled / EntityManager.inst.uavs.Count;
+            averageUAVTravelDistance += uav.physics.distanceTraveled / totalUAVs;
         }
 
         return timeStamp.ToString() + "," + totalConnectedUsers + "," + totalDisconnectedusers + "," + averageUserDisconnectTime + "," + priority1UserAverageConnectionTime + "," + priority2UserAverageConnectionTime + "," + priority3UserAverageConnectionTime + "," + totalActiveUAVs + "," + averageUAVTravelDistance;
