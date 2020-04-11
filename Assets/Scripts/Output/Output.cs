@@ -11,7 +11,7 @@ public static class MyExtensions
     {
         return string.Concat(
             Path.GetFileNameWithoutExtension(fileName),
-            System.DateTime.Now.ToString("yyyyMMddHHmmssfff"),
+            System.DateTime.Now.ToString("yyyyMMddHHmm"),
             Path.GetExtension(fileName)
             );
     }
@@ -19,25 +19,25 @@ public static class MyExtensions
 
 public class Output : MonoBehaviour
 {
-    public float updateFrequency = 1;
-    private float timeRemaining;
-
-
+    public float updateFrequency = 1f;
+    private float timeRemaining = 1f;
+    private float parameterTimeRemaining = 2f;
 
     private bool headerWritten = false;
     private string header;
 
     private bool parameterHeaderWritten = false;
+    private bool parameterWritten = false;
     private string parameterHeader;
 
     private string generateHeader()
     {
-        return header = "Time Stamp (Sec)" + "," + "Total Connected Users" + "," + "Total Disconnected Users" + "," + "Average User Disconnection Time" + "," + "Priority 1 User Average Connection Time" + "," + "Priority 2 User Average Connection Time" + "," + "Priority 3 User Average Connection Time" + "," + "Active UAVs" + "," + "Total UAVs Travel Distance";
+        return header = "Time Stamp (Sec),Total Connected Users,Total Disconnected Users,Average User Disconnection Time,Priority 1 User Average Connection Time,Priority 2 User Average Connection Time,Priority 3 User Average Connection Time,Active UAVs,Total UAVs,Travel Distance";
     }
 
     private string generateParameterHeader()
     {
-        return parameterHeader = "HI";
+        return parameterHeader = "Total UAVs,Total Users,Node to Node Distance,Number of Rows,Number of Columns,UAV Height from Ground,Connection Radius,A-Star Update Frequency,Local Maximum Update Frequency,Maximum Timer Per Priority";
     }
 
 
@@ -47,7 +47,7 @@ public class Output : MonoBehaviour
     private string parameterFilePath = "Assets/Scripts/Output/Parameters.csv";
     StreamWriter writeToFile, parameterWriteToFile;
 
-    void WriteLineToFile(string line)
+    void WriteOutputToFile(string line)
     {
         if (!File.Exists(filePath))
         {
@@ -64,7 +64,7 @@ public class Output : MonoBehaviour
         writeToFile.Close();
     }
 
-    void ParameterWriteLineToFile()
+    void WriteParameterToFile()
     {
         if (!File.Exists(parameterFilePath))
         {
@@ -77,16 +77,8 @@ public class Output : MonoBehaviour
             writeToFile.WriteLine(generateParameterHeader());
             parameterHeaderWritten = true;
         }
-        writeToFile.WriteLine(generateParameterHeader());
         writeToFile.WriteLine(CreateParameterStringOfData());
         writeToFile.Close();
-    }
-
-    private void Start()
-    {
-        startTime = System.DateTime.Now;
-        filePath += MyExtensions.AppendTimeStamp("Date.csv");
-
     }
 
     private string CreateStringOfData()
@@ -131,26 +123,36 @@ public class Output : MonoBehaviour
 
         foreach (UAVEntity uav in EntityManager.inst.uavs)
         {
-            averageUAVTravelDistance += uav.physics.distanceTraveled / totalActiveUAVs;
+            averageUAVTravelDistance += uav.physics.distanceTraveled / EntityManager.inst.uavs.Count;
         }
 
-        return timeStamp.ToString() + ", " + totalConnectedUsers + ", " + totalDisconnectedusers + ", " + averageUserDisconnectTime + ", " + priority1UserAverageConnectionTime + ", " + priority2UserAverageConnectionTime + ", " + priority3UserAverageConnectionTime + ", " + totalActiveUAVs + ", " + averageUAVTravelDistance;
+        return timeStamp.ToString() + "," + totalConnectedUsers + "," + totalDisconnectedusers + "," + averageUserDisconnectTime + "," + priority1UserAverageConnectionTime + "," + priority2UserAverageConnectionTime + "," + priority3UserAverageConnectionTime + "," + totalActiveUAVs + "," + averageUAVTravelDistance;
     }
 
     private string CreateParameterStringOfData()
     {
-        return "HI";
+        return EntityManager.inst.uavs.Count + "," + EntityManager.inst.users.Count + "," + ConfigurationMap.inst.nodeDistance + "," + ConfigurationMap.inst.rows + "," + ConfigurationMap.inst.columns + "," + ConfigurationMap.inst.uavHeight + "," + NetworkManager.inst.connectionRadius + "," + NetworkManager.inst.updateFrequency + "," + Algorithm1.inst.updateFrequency + "," + Router.maximumMillisecondTimerPerPriority;
     }
 
-        void Update()
+    private void Start()
+    {
+        startTime = System.DateTime.Now;
+        filePath += MyExtensions.AppendTimeStamp("Date.csv");
+    }
+
+    void Update()
     {
         if (timeRemaining < 0 && NetworkManager.inst.routers.Count > 0)
         {
             timeRemaining = updateFrequency;
-            WriteLineToFile(CreateStringOfData());
+            WriteOutputToFile(CreateStringOfData());
         }
         timeRemaining -= Time.deltaTime;
+        if (timeRemaining < 0 && !parameterWritten)
+        {
+            WriteParameterToFile();
+            parameterWritten = true;
+        }
+        parameterTimeRemaining -= Time.deltaTime;
     }
-
-
 }

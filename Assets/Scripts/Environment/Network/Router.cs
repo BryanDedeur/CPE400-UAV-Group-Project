@@ -6,7 +6,7 @@ using UnityEngine;
 public class Router : MonoBehaviour
 {
     public UAVEntity entity;
-    static private double maximumMillisecondTimerPerPriority = 250.0f;
+    static public double maximumMillisecondTimerPerPriority = 250.0f;
 
     public Color routerToDeviceColor = Color.red;
     public Color routerToRouterColor = Color.blue;
@@ -34,7 +34,7 @@ public class Router : MonoBehaviour
 
     private void Awake()
     {
-        count = count + 1;
+        count += 1;
     }
 
     public int GetID()
