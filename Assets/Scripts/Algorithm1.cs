@@ -6,6 +6,13 @@ using Coordinate = ConfigurationMap.Coordinate;
 
 public class Algorithm1 : MonoBehaviour
 {
+    public static Algorithm1 inst;
+    
+    void Awake()
+    {
+        inst = this;
+    }
+
     public List<NodeEntity> plannedNodeEntitys;
     public int highestPlannedUserCount = 0;
     public float updateFrequency;

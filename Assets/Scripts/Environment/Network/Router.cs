@@ -32,7 +32,7 @@ public class Router : MonoBehaviour
 
     private void Awake()
     {
-        count = count + 1;
+        count += 1;
     }
 
     public int GetID()

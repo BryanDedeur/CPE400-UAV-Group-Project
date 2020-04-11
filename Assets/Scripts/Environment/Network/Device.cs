@@ -37,6 +37,7 @@ public class Device : MonoBehaviour
 
     private void Update()
     {
+
         if (connectedRouter != null && connectedRouter.numberOfHops > 0 && connectedRouter.entity.assignedNode != null)
         {
             timeConnected += Time.deltaTime;
