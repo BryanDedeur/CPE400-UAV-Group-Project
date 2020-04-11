@@ -6,13 +6,13 @@ using UnityEngine;
 public class Router : MonoBehaviour
 {
     public UAVEntity entity;
-    static private double maximumMillisecondTimerPerPriority = 250.0f;
+    static public double maximumMillisecondTimerPerPriority = 250.0f;
 
     public Color routerToDeviceColor = Color.red;
     public Color routerToRouterColor = Color.blue;
 
     public float connectionRadius = 5f;
-    public int maximumDeviceCapacity = 2;
+    public int maximumDeviceCapacity = 5;
 
     public float timeConnected;
     public Dictionary<int, Router> connectedRouters;
@@ -21,12 +21,10 @@ public class Router : MonoBehaviour
     public Router parentRouter;
     public int numberOfHops;
     public int numberOfUsersServing;
-    public bool disconnected = true;
 
     public float disconnectTimer = 5;
     private float disconnectTimeRemaining;
 
-    private float disconnectCheckTimeRemaining;
     public float AStarConnectionLength;
 
     private static int count = 0;
@@ -70,11 +68,7 @@ public class Router : MonoBehaviour
             timeConnected += Time.deltaTime;
         }
 
-        // TODO move this code into clearly defined functions
-        // TODO router probably wont ever care about the entity.entity.battery values, only on and off
-
         NetworkManager.inst.GetNearbyRouters(this);
-        //displayingConnectedRouters = connectedRouters.Values.ToList();
 
         // Keep track of the total number of users the UAV is serving (the users are not served all the time when there are more users than UAV's capacity).
         numberOfUsersServing = 0;
@@ -82,7 +76,7 @@ public class Router : MonoBehaviour
         {
             foreach (UserEntity user in entity.assignedNode.usersInRange)
             {
-                if ((user.transform.position - transform.position).magnitude < NetworkManager.inst.connectionRadius)
+                if (numberOfHops > 0 && (user.transform.position - transform.position).magnitude < NetworkManager.inst.connectionRadius)
                 {
                     ++numberOfUsersServing;
                 }
@@ -149,7 +143,7 @@ public class Router : MonoBehaviour
                         for (int i = 0; i < entity.assignedNode.usersInRange.Count; ++i)
                         {
                             // User is within connection range.
-                            if ((entity.assignedNode.usersInRange[i].transform.position - transform.position).magnitude < NetworkManager.inst.connectionRadius)
+                            if ((entity.assignedNode.usersInRange[i].transform.position - transform.position).magnitude <= NetworkManager.inst.connectionRadius)
                             {
                                 // If that user is not currently being served.
                                 if (!connectedDevices.ContainsKey(entity.assignedNode.usersInRange[i].GetID()))
@@ -167,7 +161,7 @@ public class Router : MonoBehaviour
                     }
 
                     // If new user is found.
-                    if (impatientUserIndex >= 0 && (entity.assignedNode.usersInRange[impatientUserIndex].transform.position - transform.position).magnitude < NetworkManager.inst.connectionRadius)
+                    if (impatientUserIndex >= 0 && (entity.assignedNode.usersInRange[impatientUserIndex].transform.position - transform.position).magnitude <= NetworkManager.inst.connectionRadius)
                     {
                         // Add that user to the connection list.
                         connectedDevices.Add(entity.assignedNode.usersInRange[impatientUserIndex].GetID(), entity.assignedNode.usersInRange[impatientUserIndex].device);
@@ -182,12 +176,21 @@ public class Router : MonoBehaviour
         // If UAV is disconnected from the internet.
         else if (numberOfHops == 0)
         {
-            // Wait for certain duration of time before moving closer to the tower to connect to the internet and receive instructions from the tower.
-            if (entity != null && entity.name != "Tower" && entity.battery != null && disconnectTimeRemaining < 0 && entity.battery.batteryLife > entity.battery.batteryReserveThreshold)
+            if (entity != null && entity.name != "Tower")
             {
-                disconnected = true;
-                disconnectTimeRemaining = disconnectTimer;
-                ConfigurationMap.inst.SendUAVToTower(entity);
+                // Disconnect user from the internet.
+                foreach (KeyValuePair<int, Device> device in connectedDevices)
+                {
+                    device.Value.DisconnectFromRouter();
+                }
+                connectedDevices.Clear();
+
+                // Wait for certain duration of time before moving closer to the tower to connect to the internet and receive instructions from the tower.
+                if (entity.battery != null && disconnectTimeRemaining < 0 && entity.battery.batteryLife > entity.battery.batteryReserveThreshold)
+                {
+                    disconnectTimeRemaining = disconnectTimer;
+                    ConfigurationMap.inst.SendUAVToTower(entity);
+                }
             }
             disconnectTimeRemaining -= Time.deltaTime;
 
