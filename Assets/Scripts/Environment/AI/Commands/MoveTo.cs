@@ -51,8 +51,6 @@ public class MoveTo : Command
         timeToStop = (entity.physics.speed) / (entity.physics.acceleration);
         stoppingDistance = entity.physics.speed * timeToStop + .5f * entity.physics.acceleration * Mathf.Pow(timeToStop, 2f);
 
-        magnitude = (entity.transform.position - targetPosition).magnitude;
-
         computedHeading = Mathf.Rad2Deg * (Mathf.Atan2(targetPosition.x - entity.transform.position.x, (targetPosition.z - entity.transform.position.z)));
 
         entity.physics.desiredSpeed = entity.physics.maxSpeed;

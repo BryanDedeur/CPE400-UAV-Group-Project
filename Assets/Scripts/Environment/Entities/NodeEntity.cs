@@ -55,10 +55,10 @@ public class NodeEntity : Entity
                 {
                     try
                     {
-                        float neighborDistance = (node.transform.position - user.transform.position).sqrMagnitude;
-                        if (neighborDistance < userDistanceSqr)
+                        float neighborDistanceSqr = (node.transform.position - user.transform.position).sqrMagnitude;
+                        if (neighborDistanceSqr < userDistanceSqr)
                         {
-                            userDistanceSqr = neighborDistance;
+                            userDistanceSqr = neighborDistanceSqr;
                             bestNode = node;
                         }
                     }

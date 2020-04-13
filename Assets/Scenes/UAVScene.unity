@@ -343,6 +343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectionRadius: 5.1
+  connectionRadiusSquared: 0
   totalConnectedUsers: 0
   updateFrequency: 0.5
   tower: {fileID: 0}

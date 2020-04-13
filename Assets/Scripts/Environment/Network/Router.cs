@@ -40,6 +40,25 @@ public class Router : MonoBehaviour
         return ID;
     }
 
+    /// <summary>
+    /// Determines if one transform is within the range of another transform
+    /// </summary>
+    /// <param name="a"> A transform </param>
+    /// <param name="b"> Another transform </param>
+    /// <param name="ignoreY"> To ignore the y component of the vector 3 positions </param>
+    /// <returns> Whether the transform is in range or not</returns>
+    public bool IsInRange(Transform a, Transform b, bool ignoreY)
+    {
+        if (ignoreY)
+        {
+            // compared against squared magnitude for runtime efficiency and ignore the y position.
+            return (a.position - new Vector3(b.position.x, a.position.y, b.position.z)).sqrMagnitude <= NetworkManager.inst.connectionRadiusSquared;
+        }
+
+        // compared against squared magnitude for runtime efficiency.
+        return (a.position - b.position).sqrMagnitude <= NetworkManager.inst.connectionRadiusSquared;
+    }
+
     private void Start()
     {
         connectedRouters = new Dictionary<int, Router>();
@@ -76,7 +95,8 @@ public class Router : MonoBehaviour
         {
             foreach (UserEntity user in entity.assignedNode.usersInRange)
             {
-                if (numberOfHops > 0 && (user.transform.position - transform.position).magnitude < NetworkManager.inst.connectionRadius)
+                // If there is a path to the control center and the user is within the connection radius
+                if (numberOfHops > 0 && IsInRange(user.transform, transform, true))
                 {
                     ++numberOfUsersServing;
                 }
@@ -112,7 +132,7 @@ public class Router : MonoBehaviour
                         if (entity.assignedNode != null)
                         {
                             // If user is served longer than the allotted time or the user is moves out of the assigned coordinate or user moves out of connection range.
-                            if (deviceKeyPair.Value.TimeSinceConnected().TotalMilliseconds > maximumMillisecondTimerPerPriority * deviceKeyPair.Value.priority || !entity.assignedNode.usersInRange.Contains(deviceKeyPair.Value.entity) || (deviceKeyPair.Value.transform.position - transform.position).magnitude > NetworkManager.inst.connectionRadius)
+                            if (deviceKeyPair.Value.TimeSinceConnected().TotalMilliseconds > maximumMillisecondTimerPerPriority * deviceKeyPair.Value.priority || !entity.assignedNode.usersInRange.Contains(deviceKeyPair.Value.entity) || !IsInRange(deviceKeyPair.Value.transform, transform, true))
                             {
                                 // Mark that user to remove later.
                                 removingIDs.Add(deviceKeyPair.Key);
@@ -143,7 +163,7 @@ public class Router : MonoBehaviour
                         for (int i = 0; i < entity.assignedNode.usersInRange.Count; ++i)
                         {
                             // User is within connection range.
-                            if ((entity.assignedNode.usersInRange[i].transform.position - transform.position).magnitude <= NetworkManager.inst.connectionRadius)
+                            if (IsInRange(entity.assignedNode.usersInRange[i].transform, transform, true))
                             {
                                 // If that user is not currently being served.
                                 if (!connectedDevices.ContainsKey(entity.assignedNode.usersInRange[i].GetID()))
@@ -161,7 +181,7 @@ public class Router : MonoBehaviour
                     }
 
                     // If new user is found.
-                    if (impatientUserIndex >= 0 && (entity.assignedNode.usersInRange[impatientUserIndex].transform.position - transform.position).magnitude <= NetworkManager.inst.connectionRadius)
+                    if (impatientUserIndex >= 0 && IsInRange(entity.assignedNode.usersInRange[impatientUserIndex].transform, transform, true))
                     {
                         // Add that user to the connection list.
                         connectedDevices.Add(entity.assignedNode.usersInRange[impatientUserIndex].GetID(), entity.assignedNode.usersInRange[impatientUserIndex].device);

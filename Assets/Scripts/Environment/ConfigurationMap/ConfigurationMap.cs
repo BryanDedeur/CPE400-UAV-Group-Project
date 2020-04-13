@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class ConfigurationMap : MonoBehaviour
 {
+    // Coordinate container for quick access to graph components
     public struct Coordinate
     {
         public int r;
@@ -53,6 +54,7 @@ public class ConfigurationMap : MonoBehaviour
     {
         inst = this;
 
+        // Create the ground and establish the size and position.
         if (groundPrefab == null)
         {
             groundPrefab = Resources.Load("Ground") as GameObject;
@@ -68,6 +70,7 @@ public class ConfigurationMap : MonoBehaviour
 
         nodeOffset = new Vector3(-(verticalMapSize - (2 * (Mathf.Sqrt(3) * nodeDistance) / 2f)) / 2f, 0, -(horizontalMapSize - (2 * nodeDistance)) / 2f);
 
+        // Create the tower prefab and establish the tower positioning information.
         if (towerPrefab == null)
         {
             towerPrefab = Resources.Load("Tower") as GameObject;
@@ -79,6 +82,7 @@ public class ConfigurationMap : MonoBehaviour
         towerPrefab.transform.localScale = new Vector3(1, towerPosition.y, 1);
         towerPrefab.transform.position = new Vector3(towerPosition.x, towerPosition.y / 2, towerPosition.z);
 
+        // Adjust the main camera to fit the size of the map.
         Camera.main.orthographicSize = Mathf.Max(horizontalMapSize, verticalMapSize) / 2f;
 
         visualsFolder = new GameObject();
@@ -107,11 +111,13 @@ public class ConfigurationMap : MonoBehaviour
     /// </summary>
     private void CreateNodes()
     {
+        // Create a new multi dimensional array to store the node information.
         configurationMapNodes = new NodeEntity[rows, columns];
         for (int c = 0; c < columns; ++c)
         {
             for (int r = 0; r < rows; ++r)
             {
+                // If even row, create a node offset by the node distance.
                 NodeEntity node;
                 if ((r % 2 == 0))
                 {
@@ -119,6 +125,7 @@ public class ConfigurationMap : MonoBehaviour
                 }
                 else
                 {
+                    // If odd row, and not the last column place nodes offset by the node distance.
                     if (c + 1 < columns)
                     {
                         node = EntityManager.inst.CreateNode(nodeOffset + new Vector3((Mathf.Sqrt(3) * r * (nodeDistance)) / 2, uavHeight, c * (nodeDistance) + .5f * (nodeDistance)));
@@ -128,6 +135,8 @@ public class ConfigurationMap : MonoBehaviour
                         continue;
                     }
                 }
+
+                // Create node and add it to the map if the prior cases are valid.
                 node.row = r;
                 node.col = c;
                 node.name = "Node[" + r + ", " + c + "]";
@@ -161,6 +170,7 @@ public class ConfigurationMap : MonoBehaviour
     {
         for (int i = 0; i < numberOfUsers; ++i)
         {
+            // Create a user and establish user information.
             UserEntity user = EntityManager.inst.CreateUser(groundOffset + new Vector3(UnityEngine.Random.Range(0, 100) / 100f * verticalMapSize, 0, UnityEngine.Random.Range(0, 100) / 100f * horizontalMapSize), UnityEngine.Random.Range(0, 360));
             RandomStopStartDirectionalMovement command = new RandomStopStartDirectionalMovement(user, groundOffset.x, verticalMapSize / 2, groundOffset.z, horizontalMapSize / 2);
             user.ai.SetCommand(command);
@@ -176,7 +186,8 @@ public class ConfigurationMap : MonoBehaviour
     {
         for (int i = 0; i < numberOfUAVs; ++i)
         {
-            UAVEntity uav = EntityManager.inst.CreateUAV(new Vector3(towerPrefab.transform.position.x, 0, towerPrefab.transform.position.z));
+            // Create a UAV through the entity manager.
+            UAVEntity uav = EntityManager.inst.CreateUAV(towerPrefab.transform.position);
         }
     }
 
@@ -190,16 +201,19 @@ public class ConfigurationMap : MonoBehaviour
     /// <returns> Whether or not the node was sucessfully placed on the map. </returns>
     public bool SendUAV(UAVEntity uav, NodeEntity toNode)
     {
+        // If uav is not valid
         if (uav == null)
         {
             return false;
         }
 
+        // If destination is not valid
         if (toNode == null)
         {
             return false;
         }
 
+        // Add AI command to the AI of the entity
         uav.assignedNode = toNode;
         toNode.assignedUAV = uav;
         MoveTo moveToCommand = new MoveTo(uav, toNode.transform.position);
@@ -248,6 +262,7 @@ public class ConfigurationMap : MonoBehaviour
     /// <returns> Whether or not the uav was able to be stopped. </returns>
     public bool StopUAV(int ID)
     {
+        // Stop the UAV through it's AI component.
         UAVEntity uav = EntityManager.inst.uavs[ID];
         uav.ai.StopAndRemoveAllCommands();
         uav.physics.desiredSpeed = 0;
@@ -262,11 +277,13 @@ public class ConfigurationMap : MonoBehaviour
     /// <returns> Whether or not the uav was able to be sent to the tower. </returns>
     public bool SendUAVToTower(UAVEntity uav)
     {
+        // If uav is valid. 
         if (uav == null)
         {
             return false;
         }
 
+        // Add AI command through the uav ai component.
         uav.assignedNode = null;
         MoveToUntilConnected moveToCommand = new MoveToUntilConnected(uav, towerPrefab.transform.position);
         uav.ai.SetCommand(moveToCommand);
@@ -281,16 +298,19 @@ public class ConfigurationMap : MonoBehaviour
     /// <returns> Whether or not the uav was able to be decomissioned. </returns>
     public bool DecomissionUAV(Entity uav)
     {
+        // Make sure UAV is valid
         if (uav == null)
         {
             return false;
         }
 
+        // If UAV is valid update information about the previous node it was assigned to.
         UAVEntity newUAV = uav as UAVEntity;
         newUAV.assignedNode = null;
 
         NetworkManager.inst.routers.Remove(newUAV.router.GetID());
 
+        // Add AI command to the UAV ai component.
         MoveTo moveToCommand = new MoveTo(uav, new Vector3(towerPrefab.transform.position.x, 0, towerPrefab.transform.position.z));
         uav.ai.SetCommand(moveToCommand);
         uav.ai.rejectInstructions = true;

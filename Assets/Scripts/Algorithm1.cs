@@ -226,7 +226,7 @@ public class Algorithm1 : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         // Plan and dispatch UAV every time step using local maximum greedy algorithm.
         if (counter <= 0)

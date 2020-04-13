@@ -13,6 +13,7 @@ public class NetworkManager : MonoBehaviour
     }
 
     public float connectionRadius = 1;
+    public float connectionRadiusSquared;
     public int totalConnectedUsers = 0;
 
     public float updateFrequency = 0.5f;
@@ -21,6 +22,7 @@ public class NetworkManager : MonoBehaviour
     private void Start()
     {
         connectionRadius = ConfigurationMap.inst.nodeDistance + 0.1f;
+        connectionRadiusSquared = Mathf.Pow(connectionRadius, 2f);
     }
 
     //public WISP wirelessInternetProvider;
@@ -72,7 +74,7 @@ public class NetworkManager : MonoBehaviour
                     continue;
                 }
                 // If the neighboring router is within the UAV's router's connection length, add that router to the list of neighboring router.
-                if ((router.Value.transform.position - focusRouter.transform.position).magnitude <= connectionRadius)
+                if ((router.Value.transform.position - focusRouter.transform.position).sqrMagnitude <= connectionRadiusSquared)
                 {
                     focusRouter.connectedRouters.Add(router.Key, router.Value);
                 }

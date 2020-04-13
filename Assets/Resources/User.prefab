@@ -67,6 +67,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entity: {fileID: 0}
+  rejectInstructions: 0
+  debug: 0
 --- !u!114 &114282548878245792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,6 +106,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entity: {fileID: 0}
   timeConnected: 0
+  timeDisconnected: 0
   connectedRouter: {fileID: 0}
   priority: 0
   ID: 0
