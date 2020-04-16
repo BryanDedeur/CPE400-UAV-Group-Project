@@ -119,7 +119,8 @@ public class Router : MonoBehaviour
                 // Draw connection line to the nearby connected routers.
                 foreach (KeyValuePair<int, Router> connection in connectedRouters)
                 {
-                    Debug.DrawLine(transform.position, connection.Value.transform.position, routerToRouterColor, 0);
+                    //Debug.DrawLine(transform.position, connection.Value.transform.position, routerToRouterColor, 0);
+                    LineManager.inst.DrawLine(transform.position, connection.Value.transform.position, routerToRouterColor);
                 }
 
                 // If there are users currently being served.
@@ -139,7 +140,7 @@ public class Router : MonoBehaviour
                             }
                             else // Draw connection line to the remaining eligible users.
                             {
-                                Debug.DrawLine(transform.position, deviceKeyPair.Value.transform.position, routerToDeviceColor, 0);
+                                LineManager.inst.DrawLine(transform.position, deviceKeyPair.Value.transform.position, routerToDeviceColor);
                             }
                         }
                     }
