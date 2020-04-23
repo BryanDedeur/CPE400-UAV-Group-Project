@@ -378,8 +378,8 @@ MonoBehaviour:
   nodeDistance: 15
   showNodes: 0
   showHeatMap: 0
-  numberOfUsers: 50
-  numberOfUAVs: 18
+  numberOfUsers: 100
+  numberOfUAVs: 20
   columns: 5
   rows: 5
   towerPosX: 0
