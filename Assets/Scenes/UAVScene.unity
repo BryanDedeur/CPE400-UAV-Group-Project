@@ -343,7 +343,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80c7621323879804b9dcab9f581c7c97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  connectionRadius: 5.1
+  connectionRadius: 100
   connectionRadiusSquared: 0
   totalConnectedUsers: 0
   updateFrequency: 0.5
@@ -375,13 +375,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71c0fb2f9a4fe0642891b81b865e5324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeDistance: 6
+  nodeDistance: 15
   showNodes: 0
   showHeatMap: 0
-  numberOfUsers: 200
-  numberOfUAVs: 80
-  columns: 10
-  rows: 10
+  numberOfUsers: 50
+  numberOfUAVs: 18
+  columns: 5
+  rows: 5
   towerPosX: 0
   towerPosZ: 0.5
   uavHeight: 4

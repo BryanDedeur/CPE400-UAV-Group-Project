@@ -108,7 +108,7 @@ MonoBehaviour:
   entity: {fileID: 0}
   routerToDeviceColor: {r: 1, g: 0, b: 0, a: 1}
   routerToRouterColor: {r: 0, g: 1, b: 0.9553578, a: 1}
-  connectionRadius: 5
+  connectionRadius: 100
   maximumDeviceCapacity: 2
   timeConnected: 0
   parentRouter: {fileID: 0}
@@ -130,9 +130,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   batteryLife: 1
   batteryReserveThreshold: 0.25
-  batteryDrainRateRelativeToSpeed: 0.001
-  batteryDrainRateServingUsers: 0.005
-  batteryDrainRateConstant: 0.001
+  batteryDrainRateRelativeToSpeed: 0.0001
+  batteryDrainRateServingUsers: 0.003
+  batteryDrainRateConstant: 0.006
   running: 1
 --- !u!33 &7782391213792334287
 MeshFilter:
