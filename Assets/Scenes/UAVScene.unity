@@ -377,11 +377,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeDistance: 15
   showNodes: 0
-  showHeatMap: 0
-  numberOfUsers: 100
-  numberOfUAVs: 20
-  columns: 5
-  rows: 5
+  showHeatMap: 1
+  numberOfUsers: 200
+  numberOfUAVs: 75
+  columns: 10
+  rows: 10
   towerPosX: 0
   towerPosZ: 0.5
   uavHeight: 4
@@ -439,4 +439,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lineObject: {fileID: 6295263893940223576, guid: 7a3a4f2c0de927d4da9dbf10fad8684e,
     type: 3}
-  lineSize: 0.1
+  lineSize: 0.5

@@ -5,6 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System;
 using System.IO;
 
+//A class which is used to add the current date and time to the output file so it outputs to a different file each time the simulation runs.
 public static class MyExtensions
 {
     public static string AppendTimeStamp(this string fileName)
@@ -19,34 +20,48 @@ public static class MyExtensions
 
 public class Output : MonoBehaviour
 {
+    //Time counter used to output the date to a file after every second.
     public float updateFrequency = 1f;
     private float timeRemaining = 1f;
+
+    //Time delay to output to parameters to ensure all of the parameters are initialized.
     private float parameterTimeRemaining = 2f;
-
+    
+    //Variable to ensure that the header for the parameter output file is not written more than once.
     private bool headerWritten = false;
-    private string header;
 
+    //Variable to ensure that we the data is stopped when all of the UAV's are dead.
+    private bool stopWriting = false;
+
+    //Variable to ensure that the header for the parameter output file is not written more than once.
     private bool parameterHeaderWritten = false;
-    private bool parameterWritten = false;
-    private string parameterHeader;
 
+    //Variable to ensure that the parameter output file is not written more than once.
+    private bool parameterWritten = false;
+
+    //Function to generate the header for the parameter output file.
     private string generateHeader()
     {
-        return header = "Time Stamp (Sec),Total Connected Users,Total Disconnected Users,Average User Disconnection Time,Priority 1 User Average Connection Time,Priority 2 User Average Connection Time,Priority 3 User Average Connection Time,Active UAVs,Total UAVs Travel Distance";
+        return "Time Stamp (Sec),Total Connected Users,Total Disconnected Users,Average User Disconnection Time,Priority 1 User Average Connection Time,Priority 2 User Average Connection Time,Priority 3 User Average Connection Time,Active UAVs,Total UAVs Travel Distance";
     }
 
+    //Function to generate the header for the output file.
     private string generateParameterHeader()
     {
-        return parameterHeader = "Total UAVs,Total Users,Node to Node Distance,Number of Rows,Number of Columns,UAV Height from Ground,Connection Radius,A-Star Update Frequency,Local Maximum Update Frequency,Maximum Timer Per Priority";
+        return "Total UAVs,Total Users,Node to Node Distance,Number of Rows,Number of Columns,UAV Height from Ground,Connection Radius,A-Star Update Frequency,Local Maximum Update Frequency,Maximum Timer Per Priority,Maximum Device Capacity";
     }
 
-
+    //Variable used to get the current timestamp.
     private System.DateTime startTime;
 
+    //Variables defining the file paths for the output files.
     private string filePath = "Assets/Scripts/Output/";
     private string parameterFilePath = "Assets/Scripts/Output/Parameters.csv";
+
+    //Variable which are used to open the output file and write to it.
     StreamWriter writeToFile, parameterWriteToFile;
 
+    //Function used to open, write and close the output file.
     void WriteOutputToFile(string line)
     {
         if (!File.Exists(filePath))
@@ -64,6 +79,7 @@ public class Output : MonoBehaviour
         writeToFile.Close();
     }
 
+    //Function used to open, write and close the parameter output file.
     void WriteParameterToFile()
     {
         if (!File.Exists(parameterFilePath))
@@ -81,6 +97,7 @@ public class Output : MonoBehaviour
         writeToFile.Close();
     }
 
+    //Function used to generate the data which is written to the data output file every second.
     private string CreateStringOfData()
     {
         double timeStamp = (System.DateTime.Now - startTime).TotalSeconds;
@@ -127,13 +144,17 @@ public class Output : MonoBehaviour
         {
             averageUAVTravelDistance += uav.physics.distanceTraveled / totalUAVs;
         }
-
+        if (totalActiveUAVs == 0)
+        {
+            stopWriting = true;
+        }
         return timeStamp.ToString() + "," + totalConnectedUsers + "," + totalDisconnectedusers + "," + averageUserDisconnectTime + "," + priority1UserAverageConnectionTime + "," + priority2UserAverageConnectionTime + "," + priority3UserAverageConnectionTime + "," + totalActiveUAVs + "," + averageUAVTravelDistance;
     }
 
+    //Function used to generate the data which is written parameter output to the file.
     private string CreateParameterStringOfData()
     {
-        return EntityManager.inst.uavs.Count + "," + EntityManager.inst.users.Count + "," + ConfigurationMap.inst.nodeDistance + "," + ConfigurationMap.inst.rows + "," + ConfigurationMap.inst.columns + "," + ConfigurationMap.inst.uavHeight + "," + NetworkManager.inst.connectionRadius + "," + NetworkManager.inst.updateFrequency + "," + Algorithm1.inst.updateFrequency + "," + Router.maximumMillisecondTimerPerPriority;
+        return EntityManager.inst.uavs.Count + "," + EntityManager.inst.users.Count + "," + ConfigurationMap.inst.nodeDistance + "," + ConfigurationMap.inst.rows + "," + ConfigurationMap.inst.columns + "," + ConfigurationMap.inst.uavHeight + "," + NetworkManager.inst.connectionRadius + "," + NetworkManager.inst.updateFrequency + "," + Algorithm1.inst.updateFrequency + "," + Router.maximumMillisecondTimerPerPriority + "," + Router.inst.maximumDeviceCapacity;
     }
 
     private void Start()
@@ -142,9 +163,10 @@ public class Output : MonoBehaviour
         filePath += MyExtensions.AppendTimeStamp("Data.csv");
     }
 
+    //This function is called once per frame
     void Update()
     {
-        if (timeRemaining < 0 && NetworkManager.inst.routers.Count > 0)
+        if (timeRemaining < 0 && NetworkManager.inst.routers.Count > 0 && !stopWriting)
         {
             timeRemaining = updateFrequency;
             WriteOutputToFile(CreateStringOfData());

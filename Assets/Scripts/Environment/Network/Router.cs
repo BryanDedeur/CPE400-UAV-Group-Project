@@ -30,9 +30,12 @@ public class Router : MonoBehaviour
     private static int count = 0;
     private int ID = count;
 
+    public static Router inst;
+
     private void Awake()
     {
         count += 1;
+        inst = this;
     }
 
     public int GetID()
