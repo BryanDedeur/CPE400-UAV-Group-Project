@@ -30,9 +30,6 @@ public class Output : MonoBehaviour
     //Variable to ensure that the header for the parameter output file is not written more than once.
     private bool headerWritten = false;
 
-    //Variable to ensure that we the data is stopped when all of the UAV's are dead.
-    private bool stopWriting = false;
-
     //Variable to ensure that the header for the parameter output file is not written more than once.
     private bool parameterHeaderWritten = false;
 
@@ -144,10 +141,6 @@ public class Output : MonoBehaviour
         {
             averageUAVTravelDistance += uav.physics.distanceTraveled / totalUAVs;
         }
-        if (totalActiveUAVs == 0)
-        {
-            stopWriting = true;
-        }
         return timeStamp.ToString() + "," + totalConnectedUsers + "," + totalDisconnectedusers + "," + averageUserDisconnectTime + "," + priority1UserAverageConnectionTime + "," + priority2UserAverageConnectionTime + "," + priority3UserAverageConnectionTime + "," + totalActiveUAVs + "," + averageUAVTravelDistance;
     }
 
@@ -166,7 +159,7 @@ public class Output : MonoBehaviour
     //This function is called once per frame
     void Update()
     {
-        if (timeRemaining < 0 && NetworkManager.inst.routers.Count > 0 && !stopWriting)
+        if (timeRemaining < 0 && NetworkManager.inst.routers.Count > 0)
         {
             timeRemaining = updateFrequency;
             WriteOutputToFile(CreateStringOfData());

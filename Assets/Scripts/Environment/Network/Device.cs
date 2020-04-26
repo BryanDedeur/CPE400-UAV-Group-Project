@@ -38,7 +38,7 @@ public class Device : MonoBehaviour
     private void Update()
     {
 
-        if (connectedRouter != null && connectedRouter.numberOfHops > 0 && connectedRouter.entity.assignedNode != null)
+        if (connectedRouter != null && connectedRouter.numberOfHops > 0 && connectedRouter.entity.assignedNode != null && connectedRouter.entity.battery.batteryLife > connectedRouter.entity.battery.batteryReserveThreshold)
         {
             timeConnected += Time.deltaTime;
         } else
