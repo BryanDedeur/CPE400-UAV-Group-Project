@@ -14,8 +14,8 @@ To view the running simulation visit this link: https://www.cse.unr.edu/~bryand/
 
 ## Metadata
 
-  CPE400 Computer Communication Networks
-  Instructor:Amar Nath Patra
-  Developed By: Eric Duong, Yash Shah, Bryan Dedeurwaerder
+CPE400 Computer Communication Networks  
+Instructor:Amar Nath Patra  
+Developed By: Eric Duong, Yash Shah, Bryan Dedeurwaerder  
 
 
