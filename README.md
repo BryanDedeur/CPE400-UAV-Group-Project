@@ -21,12 +21,11 @@ Beyond what Unity Engine provides, all the source code for this project was writ
 - Unity v2018.4.19f1
 - Github Desktop v2.4.1
 - Visual Studio v15.9.21
-- Overleaf 
 
 ## Metadata
 
 CPE400 Computer Communication Networks  
-University of Nevada, Reno
+University of Nevada, Reno  
 Instructor: Amar Nath Patra  
 Developed By: Eric Duong, Yash Shah, Bryan Dedeurwaerder  
 
