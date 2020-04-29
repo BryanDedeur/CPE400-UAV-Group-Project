@@ -24,7 +24,15 @@ public class ConfigurationMap : MonoBehaviour
 
     public float nodeDistance = 10;
     public bool showNodes = true;
+    public void ToggleVertices(bool state)
+    {
+        showNodes = state;
+    }
     public bool showHeatMap = false;
+    public void ToggleHeatMap(bool state)
+    {
+        showHeatMap = state;
+    }
     public NodeEntity[,] configurationMapNodes;
 
     [Range(1, 200)]

@@ -21,7 +21,20 @@ public class EntityManager : MonoBehaviour
     private GameObject userFolder;
     private GameObject userPrefab;
     public List<UserEntity> users;
-
+    public void ToggleUsers(bool state)
+    {
+        foreach (UserEntity user in users)
+        {
+            user.transform.gameObject.GetComponentInChildren<MeshRenderer>().enabled = state;
+        }
+    }
+    public void ToggleUAVs(bool state)
+    {
+        foreach (UAVEntity uav in uavs)
+        {
+            uav.transform.gameObject.GetComponent<MeshRenderer>().enabled = state;
+        }
+    }
 
     private void Start()
     {
@@ -117,5 +130,7 @@ public class EntityManager : MonoBehaviour
 
         return user;
     }
+
+
 
 }

@@ -16,6 +16,13 @@ To view the running simulation visit this link: https://www.cse.unr.edu/~bryand/
 
 Beyond what Unity Engine provides, all the source code for this project was written in C#. The location of the source code can be located under Assets -> Scripts. Visual Studio v15.9.21 was the primary IDE used for development. All version control was managed through this repository.
 
+## Development Software
+- Unity Hub v2.3.0
+- Unity v2018.4.19f1
+- Github Desktop v2.4.1
+- Visual Studio v15.9.21
+- Overleaf 
+
 ## Metadata
 
 CPE400 Computer Communication Networks  

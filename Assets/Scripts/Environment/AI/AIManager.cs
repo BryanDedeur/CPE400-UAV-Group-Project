@@ -9,4 +9,14 @@ public class AIManager : MonoBehaviour
     {
         inst = this;
     }
+    public void DecomissionAI(bool state)
+    {
+        if (state)
+        {
+            foreach (UAVEntity uav in EntityManager.inst.uavs)
+            {
+                ConfigurationMap.inst.DecomissionUAV(uav);
+            }
+        }
+    }
 }

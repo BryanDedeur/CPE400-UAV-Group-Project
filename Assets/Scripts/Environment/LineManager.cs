@@ -8,12 +8,24 @@ public class LineManager : MonoBehaviour
     public GameObject lineObject;
 
     public float lineSize;
+    private float lineSizeStored;
+    public void ToggleLines(bool state)
+    {
+        if (state)
+        {
+            lineSize = lineSizeStored;
+        } else
+        {
+            lineSize = 0;
+        }
+    }
 
     private List<LineRenderer> oldRenderers;
     private int newRenderCount;
 
     private void Awake()
     {
+        lineSizeStored = lineSize;
         inst = this;
         oldRenderers = new List<LineRenderer>();
         newRenderCount = 0;
@@ -22,7 +34,7 @@ public class LineManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (oldRenderers.Count > newRenderCount)
+        if (oldRenderers.Count >= newRenderCount)
         {
             for (int i = 0; i < oldRenderers.Count - newRenderCount; ++i)
             {
@@ -42,6 +54,8 @@ public class LineManager : MonoBehaviour
         if (oldRenderers.Count > newRenderCount)
         {
             lr = oldRenderers[newRenderCount - 1];
+            lr.startWidth = lineSize;
+            lr.endWidth = lineSize;
         } else
         {
             GameObject newLine = new GameObject();
