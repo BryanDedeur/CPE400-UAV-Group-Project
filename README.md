@@ -19,7 +19,9 @@ Beyond what Unity Engine provides, all the source code for this project was writ
 ## Metadata
 
 CPE400 Computer Communication Networks  
-Instructor:Amar Nath Patra  
+University of Nevada, Reno
+Instructor: Amar Nath Patra  
 Developed By: Eric Duong, Yash Shah, Bryan Dedeurwaerder  
+
 
 
