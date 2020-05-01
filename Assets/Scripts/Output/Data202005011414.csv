@@ -1,0 +1,6 @@
+Time Stamp (Sec),Total Connected Users,Total Disconnected Users,Average User Disconnection Time,Priority 1 User Average Connection Time,Priority 2 User Average Connection Time,Priority 3 User Average Connection Time,Active UAVs,Total UAVs Travel Distance
+2.0469841,1,199,1.023345,0,0,0.005912926,75,1.17
+3.0767371,11,189,2.033715,0.01719219,0.01532587,0.04056715,75,10.44326
+Time Stamp (Sec),Total Connected Users,Total Disconnected Users,Average User Disconnection Time,Priority 1 User Average Connection Time,Priority 2 User Average Connection Time,Priority 3 User Average Connection Time,Active UAVs,Total UAVs Travel Distance
+2.386908,2,198,1.020181,0,0.005519618,0.006487973,75,1.17
+3.3906534,3,197,2.018978,0.0003893934,0.019569,0.02367032,75,10.18588

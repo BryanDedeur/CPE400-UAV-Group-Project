@@ -25,6 +25,14 @@ public class NetworkManager : MonoBehaviour
         connectionRadiusSquared = Mathf.Pow(connectionRadius, 2f);
     }
 
+    public void ToggleRouterConnections(bool state)
+    {
+        foreach (KeyValuePair<int, Router> router in routers)
+        {
+            router.Value.drawConnections = state;
+        }
+    }
+
     //public WISP wirelessInternetProvider;
     public Router tower;
     public Dictionary<int, Device> devices;

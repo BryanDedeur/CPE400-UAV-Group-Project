@@ -108,6 +108,7 @@ MonoBehaviour:
   entity: {fileID: 0}
   routerToDeviceColor: {r: 1, g: 0, b: 0, a: 1}
   routerToRouterColor: {r: 0, g: 1, b: 0.9553578, a: 1}
+  drawConnections: 1
   connectionRadius: 100
   maximumDeviceCapacity: 2
   timeConnected: 0
@@ -128,6 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441e9fdc25a02cc4cb813ec241f02212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  staticBattery: 0
   batteryLife: 1
   batteryReserveThreshold: 0.25
   batteryDrainRateRelativeToSpeed: 0.0001

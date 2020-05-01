@@ -8,24 +8,12 @@ public class LineManager : MonoBehaviour
     public GameObject lineObject;
 
     public float lineSize;
-    private float lineSizeStored;
-    public void ToggleLines(bool state)
-    {
-        if (state)
-        {
-            lineSize = lineSizeStored;
-        } else
-        {
-            lineSize = 0;
-        }
-    }
 
-    private List<LineRenderer> oldRenderers;
+    public List<LineRenderer> oldRenderers;
     private int newRenderCount;
 
     private void Awake()
     {
-        lineSizeStored = lineSize;
         inst = this;
         oldRenderers = new List<LineRenderer>();
         newRenderCount = 0;
@@ -48,15 +36,17 @@ public class LineManager : MonoBehaviour
 
     public void DrawLine(Vector3 start, Vector3 end, Color color)
     {
+
         newRenderCount++;
         LineRenderer lr = null;
         // reuse old objects
-        if (oldRenderers.Count > newRenderCount)
+        if (oldRenderers.Count >= newRenderCount)
         {
             lr = oldRenderers[newRenderCount - 1];
             lr.startWidth = lineSize;
             lr.endWidth = lineSize;
-        } else
+        }
+        else
         {
             GameObject newLine = new GameObject();
             newLine.transform.parent = transform;
@@ -64,7 +54,9 @@ public class LineManager : MonoBehaviour
             lr.useWorldSpace = true;
             lr.startWidth = lineSize;
             lr.endWidth = lineSize;
+            lr.useWorldSpace = false;
             lr.receiveShadows = false;
+            lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             lr.material = new Material(Shader.Find("Sprites/Default"));
             oldRenderers.Add(lr);
         }
@@ -72,5 +64,6 @@ public class LineManager : MonoBehaviour
         lr.SetPosition(1, end);
         lr.startColor = color;
         lr.endColor = color;
+
     }
 }

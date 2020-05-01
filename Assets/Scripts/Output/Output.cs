@@ -175,6 +175,8 @@ public class Output : MonoBehaviour
         float priority3UserAverageConnectionTime = 0;
         int priority3UserCount = 0;
         float averageUAVTravelDistance = 0;
+        float averageUAVBatteryLife = 0;
+        float averageUAVBatteryReserveThreshold = 0;
 
         foreach (UserEntity user in EntityManager.inst.users)
         {
@@ -203,12 +205,17 @@ public class Output : MonoBehaviour
         foreach (UAVEntity uav in EntityManager.inst.uavs)
         {
             averageUAVTravelDistance += uav.physics.distanceTraveled / totalUAVs;
+            if (uav.battery != null)
+            {
+                averageUAVBatteryLife += uav.battery.batteryLife / totalUAVs;
+                averageUAVBatteryReserveThreshold += uav.battery.batteryReserveThreshold / totalUAVs;
+            }
         }
         if (totalActiveUAVs == 0)
         {
             stopWriting = true;
         }
-        return "Simulation Time(s): " + ((int) timeStamp) + delimiter + "Connected Devices: " + totalConnectedUsers + delimiter + "Disconnected Devices: " + totalDisconnectedusers + delimiter + "Average Device Disconnect Time(s): " + Mathf.Round(averageUserDisconnectTime * 100f)/100f + delimiter + "Average Priority 1 Connection Time(s): " + Mathf.Round(priority1UserAverageConnectionTime*100f)/100f + delimiter + "Average Priority 2 Connection Time(s): " + Mathf.Round(priority2UserAverageConnectionTime*100f)/100f + delimiter + "Average Priority 3 Connection Time(s): " + Mathf.Round(priority3UserAverageConnectionTime*100f)/100f + delimiter + "Active UAVs: " + totalActiveUAVs + delimiter + "Average UAV Travel Distance(m): " + Mathf.Round(averageUAVTravelDistance*100f)/100f;
+        return "Simulation Time(s): " + ((int) timeStamp) + delimiter + "Connected Devices: " + totalConnectedUsers + delimiter + "Disconnected Devices: " + totalDisconnectedusers + delimiter + "Average Device Disconnect Time(s): " + Mathf.Round(averageUserDisconnectTime * 100f)/100f + delimiter + "Average Priority 1 Connection Time(s): " + Mathf.Round(priority1UserAverageConnectionTime*100f)/100f + delimiter + "Average Priority 2 Connection Time(s): " + Mathf.Round(priority2UserAverageConnectionTime*100f)/100f + delimiter + "Average Priority 3 Connection Time(s): " + Mathf.Round(priority3UserAverageConnectionTime*100f)/100f + delimiter + "Active UAVs: " + totalActiveUAVs + delimiter + "Average UAV Travel Distance(m): " + Mathf.Round(averageUAVTravelDistance*100f)/100f + delimiter + "Average UAV Battery Percentage: " + Mathf.Round(averageUAVBatteryLife * 100f) / 100f + delimiter + "Average UAV Battery Reserve Threshold: " + Mathf.Round(averageUAVBatteryReserveThreshold * 100f) / 100f;
     }
 
     //Function used to generate the data which is written parameter output to the file.

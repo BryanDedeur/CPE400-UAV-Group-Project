@@ -10,6 +10,7 @@ public class Router : MonoBehaviour
 
     public Color routerToDeviceColor = Color.red;
     public Color routerToRouterColor = Color.blue;
+    public bool drawConnections = false;
 
     public float connectionRadius = 5f;
     public int maximumDeviceCapacity = 5;
@@ -119,11 +120,14 @@ public class Router : MonoBehaviour
             // If the UAV is still running.
             if (entity.battery.running)
             {
-                // Draw connection line to the nearby connected routers.
-                foreach (KeyValuePair<int, Router> connection in connectedRouters)
+                if (drawConnections)
                 {
-                    //Debug.DrawLine(transform.position, connection.Value.transform.position, routerToRouterColor, 0);
-                    LineManager.inst.DrawLine(transform.position, connection.Value.transform.position, routerToRouterColor);
+                    // Draw connection line to the nearby connected routers.
+                    foreach (KeyValuePair<int, Router> connection in connectedRouters)
+                    {
+                        //Debug.DrawLine(transform.position, connection.Value.transform.position, routerToRouterColor, 0);
+                        LineManager.inst.DrawLine(transform.position, connection.Value.transform.position, routerToRouterColor);
+                    }
                 }
 
                 // If there are users currently being served.
@@ -141,7 +145,7 @@ public class Router : MonoBehaviour
                                 // Mark that user to remove later.
                                 removingIDs.Add(deviceKeyPair.Key);
                             }
-                            else // Draw connection line to the remaining eligible users.
+                            else if (drawConnections) // Draw connection line to the remaining eligible users.
                             {
                                 LineManager.inst.DrawLine(transform.position, deviceKeyPair.Value.transform.position, routerToDeviceColor);
                             }

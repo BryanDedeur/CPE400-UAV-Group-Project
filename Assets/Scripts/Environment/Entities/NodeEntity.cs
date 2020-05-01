@@ -10,6 +10,8 @@ public class NodeEntity : Entity
     public UAVEntity assignedUAV;
     public List<NodeEntity> neighbors;
     public List<UserEntity> usersInRange;
+    public bool renderUsersInRange;
+    public Color lineColor;
 
     private GameObject nodeVisual;
     private GameObject heatVisual;
@@ -31,6 +33,13 @@ public class NodeEntity : Entity
     {
         EvaluateNearbyUsers();
 
+        if (renderUsersInRange)
+        {
+            foreach (UserEntity user in usersInRange)
+            {
+                LineManager.inst.DrawLine(transform.position, user.transform.position, lineColor);
+            }
+        }
 
         if (heatVisual.activeSelf)
         {
@@ -92,5 +101,4 @@ public class NodeEntity : Entity
     {
         heatVisual.SetActive(isRendering);
     }
-
 }

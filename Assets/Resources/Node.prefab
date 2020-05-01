@@ -55,6 +55,8 @@ MonoBehaviour:
   assignedUAV: {fileID: 0}
   neighbors: []
   usersInRange: []
+  renderUsersInRange: 0
+  lineColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6810932608814006908
 GameObject:
   m_ObjectHideFlags: 0

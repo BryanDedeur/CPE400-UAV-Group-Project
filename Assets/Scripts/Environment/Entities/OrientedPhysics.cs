@@ -33,29 +33,34 @@ public class OrientedPhysics : MonoBehaviour
         {
             desiredHeading = 360 + desiredHeading;
         }
-
-        if (Mathf.Abs(desiredHeading - heading) >= tolerance * 4f)
+        if (Mathf.Abs(heading - desiredHeading) < turnRate)
         {
-            if (desiredHeading > heading)
+            heading = desiredHeading;
+        } else
+        {
+            if (Mathf.Abs(desiredHeading - heading) >= tolerance * 4f)
             {
-                if (desiredHeading - heading > 180)
+                if (desiredHeading > heading)
                 {
-                    heading -= turnRate * Time.deltaTime;
+                    if (desiredHeading - heading > 180)
+                    {
+                        heading -= turnRate * Time.deltaTime;
+                    }
+                    else
+                    {
+                        heading += turnRate * Time.deltaTime;
+                    }
                 }
-                else
+                else if (desiredHeading < heading)
                 {
-                    heading += turnRate * Time.deltaTime;
-                }
-            }
-            else if (desiredHeading < heading)
-            {
-                if (desiredHeading - heading < -180)
-                {
-                    heading += turnRate * Time.deltaTime;
-                }
-                else
-                {
-                    heading -= turnRate * Time.deltaTime;
+                    if (desiredHeading - heading < -180)
+                    {
+                        heading += turnRate * Time.deltaTime;
+                    }
+                    else
+                    {
+                        heading -= turnRate * Time.deltaTime;
+                    }
                 }
             }
         }

@@ -35,6 +35,21 @@ public class EntityManager : MonoBehaviour
             uav.transform.gameObject.GetComponent<MeshRenderer>().enabled = state;
         }
     }
+    public void ToggleNodeUserConnections(bool state)
+    {
+        foreach (NodeEntity node in nodes)
+        {
+            node.renderUsersInRange = state;
+        }
+    }
+    public void ToggleBatteryDrainage(bool state)
+    {
+        foreach (UAVEntity uav in uavs)
+        {
+            uav.battery.staticBattery = state;
+        }
+    }
+
 
     private void Start()
     {
